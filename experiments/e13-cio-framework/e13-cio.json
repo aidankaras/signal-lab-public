@@ -1,0 +1,15 @@
+{
+ "experiment": "e13_cio_framework",
+ "window": [
+  "2005-01-03",
+  "2026-10-19"
+ ],
+ "fundamentals_tickers": 39,
+ "sharpe_strategy": 0.536,
+ "sharpe_control": -1.216,
+ "sharpe_spy": 0.642,
+ "total_strategy": 0.195,
+ "total_spy": 8.466,
+ "caveat": "BROAD-40 survivorship universe + price-cap rules; catalyst stage not testable (see SPEC)",
+ "verdict": "LOSE"
+}

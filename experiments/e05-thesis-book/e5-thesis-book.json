@@ -1,0 +1,16 @@
+{
+ "date": "2026-10-20",
+ "nav": 1000.0,
+ "book_ret": 0.0,
+ "spy_ret": -0.0,
+ "qtum_ret": 0.0,
+ "random_median": 0.0,
+ "random_p25_p75": [
+  0.0,
+  0.0
+ ],
+ "book_pctile_vs_random": 1.0,
+ "gap_vs_spy_pp": 0.0,
+ "quarters_elapsed": 0.0,
+ "demote_status": "NOT YET TESTABLE (0.00 of 2 quarters elapsed)"
+}

@@ -1,0 +1,37 @@
+{
+ "window": "2026-07-01..now (5m data limited to 60d)",
+ "spy_buyhold": 0.026,
+ "cost_rt_bps": 14.0,
+ "e7a_orb": {
+  "n": 2241,
+  "expectancy": 0.00519,
+  "total": 11.6224,
+  "win_rate": 0.686
+ },
+ "e7b_vwap_reclaim": {
+  "n": 756,
+  "expectancy": -0.00141,
+  "total": -1.0655,
+  "win_rate": 0.3
+ },
+ "e7c_vwap_fade": {
+  "n": 169,
+  "expectancy": -0.00173,
+  "total": -0.2917,
+  "win_rate": 0.296
+ },
+ "random_control": {
+  "n": 2241,
+  "expectancy": -0.00136,
+  "total": -3.0471,
+  "win_rate": 0.32
+ },
+ "e7d_gap_and_go": {
+  "n": 3,
+  "expectancy": 0.00945,
+  "total": 0.0283,
+  "win_rate": 0.667
+ },
+ "experiment": "e7_claimed_setups",
+ "verdict": "BEAT"
+}

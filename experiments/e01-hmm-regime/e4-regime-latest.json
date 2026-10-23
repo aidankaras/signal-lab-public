@@ -1,0 +1,1034 @@
+[
+ {
+  "experiment": "e4_momentum",
+  "champion": {
+   "lookback": 6,
+   "top_n": 5
+  },
+  "champion_generation": 0,
+  "champion_holdout": {
+   "strategy": {
+    "cagr": 0.2018,
+    "sharpe": 0.8445,
+    "sortino": 1.2512,
+    "maxdd": 0.2127,
+    "total_return": 0.6066,
+    "hit_rate": 0.5446,
+    "n_days": 650
+   },
+   "benchmark_sp500": {
+    "cagr": 0.1044,
+    "sharpe": 0.6245,
+    "sortino": 0.9072,
+    "maxdd": 0.245,
+    "total_return": 0.292,
+    "hit_rate": 0.5162,
+    "n_days": 650
+   },
+   "alpha_annualized": 0.1001,
+   "tracking_diff_total": 0.3146,
+   "beat_sp500": true,
+   "verdict": "BEAT",
+   "window": [
+    "2020-09-29",
+    "2023-04-28"
+   ]
+  },
+  "deflated_sharpe_prob": 0.8392128592377266,
+  "trials_logged": 24,
+  "history": [
+   {
+    "generation": 0,
+    "candidate": {
+     "lookback": 6,
+     "top_n": 5
+    },
+    "dev_walkforward": {
+     "strategy": {
+      "cagr": 0.2867,
+      "sharpe": 1.1858,
+      "sortino": 1.4359,
+      "maxdd": 0.3521,
+      "total_return": 4.4599,
+      "hit_rate": 0.5669,
+      "n_days": 1697
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1137,
+      "sharpe": 0.7019,
+      "sortino": 0.7906,
+      "maxdd": 0.3372,
+      "total_return": 1.065,
+      "hit_rate": 0.5576,
+      "n_days": 1697
+     },
+     "alpha_annualized": 0.1571,
+     "tracking_diff_total": 3.3949,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2014-01-02",
+      "2020-09-28"
+     ]
+    },
+    "holdout": {
+     "strategy": {
+      "cagr": 0.2018,
+      "sharpe": 0.8445,
+      "sortino": 1.2512,
+      "maxdd": 0.2127,
+      "total_return": 0.6066,
+      "hit_rate": 0.5446,
+      "n_days": 650
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1044,
+      "sharpe": 0.6245,
+      "sortino": 0.9072,
+      "maxdd": 0.245,
+      "total_return": 0.292,
+      "hit_rate": 0.5162,
+      "n_days": 650
+     },
+     "alpha_annualized": 0.1001,
+     "tracking_diff_total": 0.3146,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2020-09-29",
+      "2023-04-28"
+     ]
+    },
+    "promoted": true,
+    "reason": "initial champion",
+    "n_candidates": 4
+   },
+   {
+    "generation": 1,
+    "candidate": {
+     "lookback": 6,
+     "top_n": 8
+    },
+    "dev_walkforward": {
+     "strategy": {
+      "cagr": 0.29,
+      "sharpe": 1.1895,
+      "sortino": 1.4118,
+      "maxdd": 0.3477,
+      "total_return": 4.5563,
+      "hit_rate": 0.5669,
+      "n_days": 1697
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1137,
+      "sharpe": 0.7019,
+      "sortino": 0.7906,
+      "maxdd": 0.3372,
+      "total_return": 1.065,
+      "hit_rate": 0.5576,
+      "n_days": 1697
+     },
+     "alpha_annualized": 0.1602,
+     "tracking_diff_total": 3.4913,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2014-01-02",
+      "2020-09-28"
+     ]
+    },
+    "holdout": {
+     "strategy": {
+      "cagr": 0.1603,
+      "sharpe": 0.8081,
+      "sortino": 1.2103,
+      "maxdd": 0.2094,
+      "total_return": 0.4673,
+      "hit_rate": 0.5323,
+      "n_days": 650
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1044,
+      "sharpe": 0.6245,
+      "sortino": 0.9072,
+      "maxdd": 0.245,
+      "total_return": 0.292,
+      "hit_rate": 0.5162,
+      "n_days": 650
+     },
+     "alpha_annualized": 0.0543,
+     "tracking_diff_total": 0.1753,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2020-09-29",
+      "2023-04-28"
+     ]
+    },
+    "promoted": false,
+    "reason": "did not beat champion+SPY on holdout; champion stands",
+    "n_candidates": 2
+   },
+   {
+    "generation": 2,
+    "candidate": {
+     "lookback": 6,
+     "top_n": 8
+    },
+    "dev_walkforward": {
+     "strategy": {
+      "cagr": 0.29,
+      "sharpe": 1.1895,
+      "sortino": 1.4118,
+      "maxdd": 0.3477,
+      "total_return": 4.5563,
+      "hit_rate": 0.5669,
+      "n_days": 1697
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1137,
+      "sharpe": 0.7019,
+      "sortino": 0.7906,
+      "maxdd": 0.3372,
+      "total_return": 1.065,
+      "hit_rate": 0.5576,
+      "n_days": 1697
+     },
+     "alpha_annualized": 0.1602,
+     "tracking_diff_total": 3.4913,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2014-01-02",
+      "2020-09-28"
+     ]
+    },
+    "holdout": {
+     "strategy": {
+      "cagr": 0.1603,
+      "sharpe": 0.8081,
+      "sortino": 1.2103,
+      "maxdd": 0.2094,
+      "total_return": 0.4673,
+      "hit_rate": 0.5323,
+      "n_days": 650
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1044,
+      "sharpe": 0.6245,
+      "sortino": 0.9072,
+      "maxdd": 0.245,
+      "total_return": 0.292,
+      "hit_rate": 0.5162,
+      "n_days": 650
+     },
+     "alpha_annualized": 0.0543,
+     "tracking_diff_total": 0.1753,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2020-09-29",
+      "2023-04-28"
+     ]
+    },
+    "promoted": false,
+    "reason": "did not beat champion+SPY on holdout; champion stands",
+    "n_candidates": 2
+   }
+  ],
+  "control": {
+   "k": 5,
+   "seeds": 20,
+   "median_sharpe": 0.8525,
+   "median_cagr": 0.16075,
+   "beat_spy": 15,
+   "ew_universe": {
+    "cagr": 0.1705,
+    "sharpe": 1.012,
+    "sortino": 1.4521,
+    "maxdd": 0.1989,
+    "total_return": 0.5009,
+    "hit_rate": 0.5246,
+    "n_days": 650
+   }
+  },
+  "strict": {
+   "strict": "LOSE",
+   "why": "Sharpe 0.8445 <= random-pick median 0.85"
+  }
+ },
+ {
+  "experiment": "e4_reversal",
+  "champion": {
+   "lookback": 2,
+   "top_n": 8
+  },
+  "champion_generation": 0,
+  "champion_holdout": {
+   "strategy": {
+    "cagr": 0.3523,
+    "sharpe": 1.3572,
+    "sortino": 2.2735,
+    "maxdd": 0.1445,
+    "total_return": 1.1782,
+    "hit_rate": 0.5323,
+    "n_days": 650
+   },
+   "benchmark_sp500": {
+    "cagr": 0.1044,
+    "sharpe": 0.6245,
+    "sortino": 0.9072,
+    "maxdd": 0.245,
+    "total_return": 0.292,
+    "hit_rate": 0.5162,
+    "n_days": 650
+   },
+   "alpha_annualized": 0.2148,
+   "tracking_diff_total": 0.8862,
+   "beat_sp500": true,
+   "verdict": "BEAT",
+   "window": [
+    "2020-09-29",
+    "2023-04-28"
+   ]
+  },
+  "deflated_sharpe_prob": 0.9691263351906411,
+  "trials_logged": 24,
+  "history": [
+   {
+    "generation": 0,
+    "candidate": {
+     "lookback": 2,
+     "top_n": 8
+    },
+    "dev_walkforward": {
+     "strategy": {
+      "cagr": 0.1223,
+      "sharpe": 0.604,
+      "sortino": 0.7319,
+      "maxdd": 0.4442,
+      "total_return": 1.1745,
+      "hit_rate": 0.5415,
+      "n_days": 1697
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1137,
+      "sharpe": 0.7019,
+      "sortino": 0.7906,
+      "maxdd": 0.3372,
+      "total_return": 1.065,
+      "hit_rate": 0.5576,
+      "n_days": 1697
+     },
+     "alpha_annualized": 0.0206,
+     "tracking_diff_total": 0.1095,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2014-01-02",
+      "2020-09-28"
+     ]
+    },
+    "holdout": {
+     "strategy": {
+      "cagr": 0.3523,
+      "sharpe": 1.3572,
+      "sortino": 2.2735,
+      "maxdd": 0.1445,
+      "total_return": 1.1782,
+      "hit_rate": 0.5323,
+      "n_days": 650
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1044,
+      "sharpe": 0.6245,
+      "sortino": 0.9072,
+      "maxdd": 0.245,
+      "total_return": 0.292,
+      "hit_rate": 0.5162,
+      "n_days": 650
+     },
+     "alpha_annualized": 0.2148,
+     "tracking_diff_total": 0.8862,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2020-09-29",
+      "2023-04-28"
+     ]
+    },
+    "promoted": true,
+    "reason": "initial champion",
+    "n_candidates": 4
+   },
+   {
+    "generation": 1,
+    "candidate": {
+     "lookback": 1,
+     "top_n": 8
+    },
+    "dev_walkforward": {
+     "strategy": {
+      "cagr": 0.1232,
+      "sharpe": 0.6109,
+      "sortino": 0.7418,
+      "maxdd": 0.4488,
+      "total_return": 1.1869,
+      "hit_rate": 0.538,
+      "n_days": 1697
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1137,
+      "sharpe": 0.7019,
+      "sortino": 0.7906,
+      "maxdd": 0.3372,
+      "total_return": 1.065,
+      "hit_rate": 0.5576,
+      "n_days": 1697
+     },
+     "alpha_annualized": 0.0209,
+     "tracking_diff_total": 0.1219,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2014-01-02",
+      "2020-09-28"
+     ]
+    },
+    "holdout": {
+     "strategy": {
+      "cagr": 0.151,
+      "sharpe": 0.7026,
+      "sortino": 1.077,
+      "maxdd": 0.2873,
+      "total_return": 0.4373,
+      "hit_rate": 0.5354,
+      "n_days": 650
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1044,
+      "sharpe": 0.6245,
+      "sortino": 0.9072,
+      "maxdd": 0.245,
+      "total_return": 0.292,
+      "hit_rate": 0.5162,
+      "n_days": 650
+     },
+     "alpha_annualized": 0.0529,
+     "tracking_diff_total": 0.1453,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2020-09-29",
+      "2023-04-28"
+     ]
+    },
+    "promoted": false,
+    "reason": "did not beat champion+SPY on holdout; champion stands",
+    "n_candidates": 2
+   },
+   {
+    "generation": 2,
+    "candidate": {
+     "lookback": 1,
+     "top_n": 8
+    },
+    "dev_walkforward": {
+     "strategy": {
+      "cagr": 0.1232,
+      "sharpe": 0.6109,
+      "sortino": 0.7418,
+      "maxdd": 0.4488,
+      "total_return": 1.1869,
+      "hit_rate": 0.538,
+      "n_days": 1697
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1137,
+      "sharpe": 0.7019,
+      "sortino": 0.7906,
+      "maxdd": 0.3372,
+      "total_return": 1.065,
+      "hit_rate": 0.5576,
+      "n_days": 1697
+     },
+     "alpha_annualized": 0.0209,
+     "tracking_diff_total": 0.1219,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2014-01-02",
+      "2020-09-28"
+     ]
+    },
+    "holdout": {
+     "strategy": {
+      "cagr": 0.151,
+      "sharpe": 0.7026,
+      "sortino": 1.077,
+      "maxdd": 0.2873,
+      "total_return": 0.4373,
+      "hit_rate": 0.5354,
+      "n_days": 650
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1044,
+      "sharpe": 0.6245,
+      "sortino": 0.9072,
+      "maxdd": 0.245,
+      "total_return": 0.292,
+      "hit_rate": 0.5162,
+      "n_days": 650
+     },
+     "alpha_annualized": 0.0529,
+     "tracking_diff_total": 0.1453,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2020-09-29",
+      "2023-04-28"
+     ]
+    },
+    "promoted": false,
+    "reason": "did not beat champion+SPY on holdout; champion stands",
+    "n_candidates": 2
+   }
+  ],
+  "control": {
+   "k": 8,
+   "seeds": 20,
+   "median_sharpe": 0.7711,
+   "median_cagr": 0.13355,
+   "beat_spy": 13,
+   "ew_universe": {
+    "cagr": 0.1705,
+    "sharpe": 1.012,
+    "sortino": 1.4521,
+    "maxdd": 0.1989,
+    "total_return": 0.5009,
+    "hit_rate": 0.5246,
+    "n_days": 650
+   }
+  },
+  "strict": {
+   "strict": "PASS",
+   "why": "beats SPY, control median, EW universe"
+  }
+ },
+ {
+  "experiment": "e4_lowvol",
+  "champion": {
+   "lookback": 6,
+   "top_n": 8
+  },
+  "champion_generation": 0,
+  "champion_holdout": {
+   "strategy": {
+    "cagr": 0.0864,
+    "sharpe": 0.6953,
+    "sortino": 0.9592,
+    "maxdd": 0.1766,
+    "total_return": 0.2383,
+    "hit_rate": 0.56,
+    "n_days": 650
+   },
+   "benchmark_sp500": {
+    "cagr": 0.1044,
+    "sharpe": 0.6245,
+    "sortino": 0.9072,
+    "maxdd": 0.245,
+    "total_return": 0.292,
+    "hit_rate": 0.5162,
+    "n_days": 650
+   },
+   "alpha_annualized": -0.0253,
+   "tracking_diff_total": -0.0537,
+   "beat_sp500": false,
+   "verdict": "LOSE",
+   "window": [
+    "2020-09-29",
+    "2023-04-28"
+   ]
+  },
+  "deflated_sharpe_prob": 0.8426881794087027,
+  "trials_logged": 24,
+  "history": [
+   {
+    "generation": 0,
+    "candidate": {
+     "lookback": 6,
+     "top_n": 8
+    },
+    "dev_walkforward": {
+     "strategy": {
+      "cagr": 0.117,
+      "sharpe": 0.8219,
+      "sortino": 1.0062,
+      "maxdd": 0.2306,
+      "total_return": 1.1063,
+      "hit_rate": 0.5463,
+      "n_days": 1697
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1137,
+      "sharpe": 0.7019,
+      "sortino": 0.7906,
+      "maxdd": 0.3372,
+      "total_return": 1.065,
+      "hit_rate": 0.5576,
+      "n_days": 1697
+     },
+     "alpha_annualized": -0.0016,
+     "tracking_diff_total": 0.0413,
+     "beat_sp500": false,
+     "verdict": "LOSE",
+     "window": [
+      "2014-01-02",
+      "2020-09-28"
+     ]
+    },
+    "holdout": {
+     "strategy": {
+      "cagr": 0.0864,
+      "sharpe": 0.6953,
+      "sortino": 0.9592,
+      "maxdd": 0.1766,
+      "total_return": 0.2383,
+      "hit_rate": 0.56,
+      "n_days": 650
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1044,
+      "sharpe": 0.6245,
+      "sortino": 0.9072,
+      "maxdd": 0.245,
+      "total_return": 0.292,
+      "hit_rate": 0.5162,
+      "n_days": 650
+     },
+     "alpha_annualized": -0.0253,
+     "tracking_diff_total": -0.0537,
+     "beat_sp500": false,
+     "verdict": "LOSE",
+     "window": [
+      "2020-09-29",
+      "2023-04-28"
+     ]
+    },
+    "promoted": true,
+    "reason": "initial champion",
+    "n_candidates": 4
+   },
+   {
+    "generation": 1,
+    "candidate": {
+     "lookback": 12,
+     "top_n": 8
+    },
+    "dev_walkforward": {
+     "strategy": {
+      "cagr": 0.1113,
+      "sharpe": 0.7873,
+      "sortino": 0.9452,
+      "maxdd": 0.2597,
+      "total_return": 1.0351,
+      "hit_rate": 0.5439,
+      "n_days": 1697
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1137,
+      "sharpe": 0.7019,
+      "sortino": 0.7906,
+      "maxdd": 0.3372,
+      "total_return": 1.065,
+      "hit_rate": 0.5576,
+      "n_days": 1697
+     },
+     "alpha_annualized": -0.0067,
+     "tracking_diff_total": -0.0299,
+     "beat_sp500": false,
+     "verdict": "LOSE",
+     "window": [
+      "2014-01-02",
+      "2020-09-28"
+     ]
+    },
+    "holdout": {
+     "strategy": {
+      "cagr": 0.1143,
+      "sharpe": 0.8849,
+      "sortino": 1.2423,
+      "maxdd": 0.1725,
+      "total_return": 0.3219,
+      "hit_rate": 0.5477,
+      "n_days": 650
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1044,
+      "sharpe": 0.6245,
+      "sortino": 0.9072,
+      "maxdd": 0.245,
+      "total_return": 0.292,
+      "hit_rate": 0.5162,
+      "n_days": 650
+     },
+     "alpha_annualized": 0.0001,
+     "tracking_diff_total": 0.0299,
+     "beat_sp500": false,
+     "verdict": "LOSE",
+     "window": [
+      "2020-09-29",
+      "2023-04-28"
+     ]
+    },
+    "promoted": false,
+    "reason": "did not beat champion+SPY on holdout; champion stands",
+    "n_candidates": 2
+   },
+   {
+    "generation": 2,
+    "candidate": {
+     "lookback": 12,
+     "top_n": 8
+    },
+    "dev_walkforward": {
+     "strategy": {
+      "cagr": 0.1113,
+      "sharpe": 0.7873,
+      "sortino": 0.9452,
+      "maxdd": 0.2597,
+      "total_return": 1.0351,
+      "hit_rate": 0.5439,
+      "n_days": 1697
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1137,
+      "sharpe": 0.7019,
+      "sortino": 0.7906,
+      "maxdd": 0.3372,
+      "total_return": 1.065,
+      "hit_rate": 0.5576,
+      "n_days": 1697
+     },
+     "alpha_annualized": -0.0067,
+     "tracking_diff_total": -0.0299,
+     "beat_sp500": false,
+     "verdict": "LOSE",
+     "window": [
+      "2014-01-02",
+      "2020-09-28"
+     ]
+    },
+    "holdout": {
+     "strategy": {
+      "cagr": 0.1143,
+      "sharpe": 0.8849,
+      "sortino": 1.2423,
+      "maxdd": 0.1725,
+      "total_return": 0.3219,
+      "hit_rate": 0.5477,
+      "n_days": 650
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1044,
+      "sharpe": 0.6245,
+      "sortino": 0.9072,
+      "maxdd": 0.245,
+      "total_return": 0.292,
+      "hit_rate": 0.5162,
+      "n_days": 650
+     },
+     "alpha_annualized": 0.0001,
+     "tracking_diff_total": 0.0299,
+     "beat_sp500": false,
+     "verdict": "LOSE",
+     "window": [
+      "2020-09-29",
+      "2023-04-28"
+     ]
+    },
+    "promoted": false,
+    "reason": "did not beat champion+SPY on holdout; champion stands",
+    "n_candidates": 2
+   }
+  ],
+  "control": {
+   "k": 8,
+   "seeds": 20,
+   "median_sharpe": 0.7711,
+   "median_cagr": 0.13355,
+   "beat_spy": 13,
+   "ew_universe": {
+    "cagr": 0.1705,
+    "sharpe": 1.012,
+    "sortino": 1.4521,
+    "maxdd": 0.1989,
+    "total_return": 0.5009,
+    "hit_rate": 0.5246,
+    "n_days": 650
+   }
+  },
+  "strict": {
+   "strict": "LOSE",
+   "why": "trails SPY; Sharpe 0.6953 <= random-pick median 0.77; CAGR 8.6% <= equal-weight universe 17.1%"
+  }
+ },
+ {
+  "experiment": "e4_trend",
+  "champion": {
+   "lookback": 6,
+   "top_n": 5
+  },
+  "champion_generation": 1,
+  "champion_holdout": {
+   "strategy": {
+    "cagr": 0.2658,
+    "sharpe": 1.1107,
+    "sortino": 1.7357,
+    "maxdd": 0.1874,
+    "total_return": 0.8367,
+    "hit_rate": 0.5554,
+    "n_days": 650
+   },
+   "benchmark_sp500": {
+    "cagr": 0.1044,
+    "sharpe": 0.6245,
+    "sortino": 0.9072,
+    "maxdd": 0.245,
+    "total_return": 0.292,
+    "hit_rate": 0.5162,
+    "n_days": 650
+   },
+   "alpha_annualized": 0.1472,
+   "tracking_diff_total": 0.5447,
+   "beat_sp500": true,
+   "verdict": "BEAT",
+   "window": [
+    "2020-09-29",
+    "2023-04-28"
+   ]
+  },
+  "deflated_sharpe_prob": 0.9101978139236379,
+  "trials_logged": 24,
+  "history": [
+   {
+    "generation": 0,
+    "candidate": {
+     "lookback": 6,
+     "top_n": 8
+    },
+    "dev_walkforward": {
+     "strategy": {
+      "cagr": 0.304,
+      "sharpe": 1.2811,
+      "sortino": 1.5466,
+      "maxdd": 0.3342,
+      "total_return": 4.9732,
+      "hit_rate": 0.5651,
+      "n_days": 1697
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1137,
+      "sharpe": 0.7019,
+      "sortino": 0.7906,
+      "maxdd": 0.3372,
+      "total_return": 1.065,
+      "hit_rate": 0.5576,
+      "n_days": 1697
+     },
+     "alpha_annualized": 0.1684,
+     "tracking_diff_total": 3.9082,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2014-01-02",
+      "2020-09-28"
+     ]
+    },
+    "holdout": {
+     "strategy": {
+      "cagr": 0.1823,
+      "sharpe": 0.9436,
+      "sortino": 1.4511,
+      "maxdd": 0.1746,
+      "total_return": 0.5402,
+      "hit_rate": 0.5492,
+      "n_days": 650
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1044,
+      "sharpe": 0.6245,
+      "sortino": 0.9072,
+      "maxdd": 0.245,
+      "total_return": 0.292,
+      "hit_rate": 0.5162,
+      "n_days": 650
+     },
+     "alpha_annualized": 0.0703,
+     "tracking_diff_total": 0.2482,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2020-09-29",
+      "2023-04-28"
+     ]
+    },
+    "promoted": true,
+    "reason": "initial champion",
+    "n_candidates": 4
+   },
+   {
+    "generation": 1,
+    "candidate": {
+     "lookback": 6,
+     "top_n": 5
+    },
+    "dev_walkforward": {
+     "strategy": {
+      "cagr": 0.2761,
+      "sharpe": 1.1465,
+      "sortino": 1.4079,
+      "maxdd": 0.3342,
+      "total_return": 4.165,
+      "hit_rate": 0.5651,
+      "n_days": 1697
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1137,
+      "sharpe": 0.7019,
+      "sortino": 0.7906,
+      "maxdd": 0.3372,
+      "total_return": 1.065,
+      "hit_rate": 0.5576,
+      "n_days": 1697
+     },
+     "alpha_annualized": 0.149,
+     "tracking_diff_total": 3.1,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2014-01-02",
+      "2020-09-28"
+     ]
+    },
+    "holdout": {
+     "strategy": {
+      "cagr": 0.2658,
+      "sharpe": 1.1107,
+      "sortino": 1.7357,
+      "maxdd": 0.1874,
+      "total_return": 0.8367,
+      "hit_rate": 0.5554,
+      "n_days": 650
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1044,
+      "sharpe": 0.6245,
+      "sortino": 0.9072,
+      "maxdd": 0.245,
+      "total_return": 0.292,
+      "hit_rate": 0.5162,
+      "n_days": 650
+     },
+     "alpha_annualized": 0.1472,
+     "tracking_diff_total": 0.5447,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2020-09-29",
+      "2023-04-28"
+     ]
+    },
+    "promoted": true,
+    "reason": "beats champion on holdout and SPY",
+    "n_candidates": 2
+   },
+   {
+    "generation": 2,
+    "candidate": {
+     "lookback": 6,
+     "top_n": 8
+    },
+    "dev_walkforward": {
+     "strategy": {
+      "cagr": 0.3016,
+      "sharpe": 1.3024,
+      "sortino": 1.5227,
+      "maxdd": 0.3401,
+      "total_return": 4.9019,
+      "hit_rate": 0.574,
+      "n_days": 1697
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1137,
+      "sharpe": 0.7019,
+      "sortino": 0.7906,
+      "maxdd": 0.3372,
+      "total_return": 1.065,
+      "hit_rate": 0.5576,
+      "n_days": 1697
+     },
+     "alpha_annualized": 0.1653,
+     "tracking_diff_total": 3.8369,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2014-01-02",
+      "2020-09-28"
+     ]
+    },
+    "holdout": {
+     "strategy": {
+      "cagr": 0.1823,
+      "sharpe": 0.9436,
+      "sortino": 1.4511,
+      "maxdd": 0.1746,
+      "total_return": 0.5402,
+      "hit_rate": 0.5492,
+      "n_days": 650
+     },
+     "benchmark_sp500": {
+      "cagr": 0.1044,
+      "sharpe": 0.6245,
+      "sortino": 0.9072,
+      "maxdd": 0.245,
+      "total_return": 0.292,
+      "hit_rate": 0.5162,
+      "n_days": 650
+     },
+     "alpha_annualized": 0.0703,
+     "tracking_diff_total": 0.2482,
+     "beat_sp500": true,
+     "verdict": "BEAT",
+     "window": [
+      "2020-09-29",
+      "2023-04-28"
+     ]
+    },
+    "promoted": false,
+    "reason": "did not beat champion+SPY on holdout; champion stands",
+    "n_candidates": 2
+   }
+  ],
+  "control": {
+   "k": 5,
+   "seeds": 20,
+   "median_sharpe": 0.8525,
+   "median_cagr": 0.16075,
+   "beat_spy": 15,
+   "ew_universe": {
+    "cagr": 0.1705,
+    "sharpe": 1.012,
+    "sortino": 1.4521,
+    "maxdd": 0.1989,
+    "total_return": 0.5009,
+    "hit_rate": 0.5246,
+    "n_days": 650
+   }
+  },
+  "strict": {
+   "strict": "PASS",
+   "why": "beats SPY, control median, EW universe"
+  }
+ }
+]

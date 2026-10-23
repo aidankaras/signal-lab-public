@@ -1,0 +1,21 @@
+# caches / bytecode
+data/cache/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/
+*.log
+# generated run output (published selectively under experiments/*/ and docs/)
+reports/
+# internal / not for the public repo
+reference/
+HANDOFF.md
+BUILD-SPEC.md
+crons/
+e9_debug.py
+experiments/experiment-5-thesis-research.md
+# large data files — regenerate with the fetch/regenerate scripts in each experiment
+experiments/e10-gbm-ranker/sp500_membership.json
+experiments/e19-foundation-forecast/data/fc_*.csv
+*.pkl

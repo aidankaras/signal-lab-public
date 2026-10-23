@@ -1,0 +1,19 @@
+[project]
+name = "signal-lab"
+version = "0.1.0"
+description = "Walk-forward backtesting harness with pre-registered experiments and random controls"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["experiments", "reference"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E401", "E501", "E701", "E702", "E741"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --ignore=tests/smoke.py --ignore=tests/test_e4.py"
