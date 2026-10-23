@@ -1,0 +1,46 @@
+{
+ "cluster": {
+  "n_train": 6,
+  "n_ho": 120,
+  "train_mean": 0.01934095928724668,
+  "ho_mean": -0.01533198472317997,
+  "ho_median": -0.0108684480766128,
+  "ho_t_month": -2.3012461360654046,
+  "ctrl_mean": 0.00019765983401547014,
+  "ctrl_p95": 0.009967220966808282,
+  "ho_terciles": {
+   "lo": -0.0208,
+   "mid": -0.0165,
+   "hi": -0.0087
+  },
+  "gates": {
+   "g1_train_pos": true,
+   "g2_ho_t2": false,
+   "g3_beat_ctrl_p95": false,
+   "g4_n": true
+  },
+  "verdict": "LOSE"
+ },
+ "single": {
+  "n_train": 117,
+  "n_ho": 1561,
+  "train_mean": 0.010714618358492625,
+  "ho_mean": -0.0014913107361979399,
+  "ho_median": -0.0015502035137990849,
+  "ho_t_month": -0.32741478278656994,
+  "ctrl_mean": -0.00039620436679154954,
+  "ctrl_p95": 0.002481001287278071,
+  "ho_terciles": {
+   "lo": 0.0005,
+   "mid": -0.0016,
+   "hi": -0.0034
+  },
+  "gates": {
+   "g1_train_pos": true,
+   "g2_ho_t2": false,
+   "g3_beat_ctrl_p95": false,
+   "g4_n": true
+  },
+  "verdict": "LOSE"
+ }
+}

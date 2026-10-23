@@ -1,0 +1,15 @@
+{
+ "ic_mean": 0.0162,
+ "ic_t": 4.63,
+ "scored_days": 3150,
+ "port_sharpe": 2.08,
+ "port_total": 8688.888,
+ "spy_sharpe": 0.89,
+ "spy_total": 5.035,
+ "verdict": "BEAT",
+ "experiment": "e10_gbm",
+ "window": [
+  "2013-07-03",
+  "2026-10-09"
+ ]
+}

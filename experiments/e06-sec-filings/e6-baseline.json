@@ -1,0 +1,15 @@
+{
+ "ic_mean": 0.017,
+ "t": 0.11,
+ "scored_days": 17,
+ "issuer_days_total": 148,
+ "n_events": 599,
+ "experiment": "e6_sec_filings",
+ "window": [
+  "2026-07-01",
+  "2026-09-09"
+ ],
+ "universe": "BROAD-40 (smaller than legacy whole-EDGAR; flagged)",
+ "verdict": "LOSE",
+ "llm_arm": "not-run (needs pinned-model subscription runtime; out of lab scope)"
+}

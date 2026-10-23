@@ -1,0 +1,13 @@
+{
+ "experiment": "e8_lstm",
+ "ic_mean": -0.0082,
+ "ic_t": -2.06,
+ "scored_days": 3024,
+ "params": {
+  "hidden": 32,
+  "seq": 20,
+  "layers": 2
+ },
+ "caveat": "BROAD-40 survivorship universe \u2014 any IC pass is suspect (see e10)",
+ "verdict": "LOSE"
+}

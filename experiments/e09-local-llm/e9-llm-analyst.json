@@ -1,0 +1,12 @@
+{
+ "experiment": "e9_llm_analyst_phase1",
+ "model": "Qwen2.5-1.5B-Instruct (q4, llama.cpp CPU)",
+ "n": 1360,
+ "accuracy": 0.4772,
+ "up_base_rate": 0.4772,
+ "model_up_rate": 1.0,
+ "binom_p_vs_50": 0.0981,
+ "ic": NaN,
+ "ic_t": NaN,
+ "verdict": "LOSE"
+}

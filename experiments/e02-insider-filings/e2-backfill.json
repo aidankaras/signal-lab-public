@@ -1,0 +1,12 @@
+{
+ "n_signals": 757,
+ "cluster_mean_fwd": 0.01098169823231196,
+ "baseline_mean_fwd": 0.014207963721777909,
+ "auc_cluster_gt_random": 0.49765,
+ "gate_auc_0.55": false,
+ "window": [
+  "2018-01-01",
+  "2024-12-31"
+ ],
+ "limit": "counts-only signal (no buy/sell split); AUC<0.55 kills v0"
+}

@@ -1,0 +1,65 @@
+{
+ "rows": 5483,
+ "start": "2005-01-03",
+ "end": "2026-10-19",
+ "tickers": {
+  "AAPL": {
+   "first_valid": "2005-01-03",
+   "nan_after_start": 0,
+   "max_abs_daily_move": 0.179,
+   "n_moves_gt_20pct": 0,
+   "stale_runs_ge5": 0
+  },
+  "JNJ": {
+   "first_valid": "2005-01-03",
+   "nan_after_start": 0,
+   "max_abs_daily_move": 0.122,
+   "n_moves_gt_20pct": 0,
+   "stale_runs_ge5": 0
+  },
+  "JPM": {
+   "first_valid": "2005-01-03",
+   "nan_after_start": 0,
+   "max_abs_daily_move": 0.251,
+   "n_moves_gt_20pct": 5,
+   "stale_runs_ge5": 0
+  },
+  "MSFT": {
+   "first_valid": "2005-01-03",
+   "nan_after_start": 0,
+   "max_abs_daily_move": 0.186,
+   "n_moves_gt_20pct": 0,
+   "stale_runs_ge5": 0
+  },
+  "PG": {
+   "first_valid": "2005-01-03",
+   "nan_after_start": 0,
+   "max_abs_daily_move": 0.12,
+   "n_moves_gt_20pct": 0,
+   "stale_runs_ge5": 0
+  },
+  "QQQ": {
+   "first_valid": "2005-01-03",
+   "nan_after_start": 0,
+   "max_abs_daily_move": 0.122,
+   "n_moves_gt_20pct": 0,
+   "stale_runs_ge5": 0
+  },
+  "SPY": {
+   "first_valid": "2005-01-03",
+   "nan_after_start": 0,
+   "max_abs_daily_move": 0.145,
+   "n_moves_gt_20pct": 0,
+   "stale_runs_ge5": 0
+  },
+  "XOM": {
+   "first_valid": "2005-01-03",
+   "nan_after_start": 0,
+   "max_abs_daily_move": 0.172,
+   "n_moves_gt_20pct": 0,
+   "stale_runs_ge5": 0
+  }
+ },
+ "missing_business_days": 203,
+ "survivorship_warning": "Universe = today's large caps (survivors). Results on single stocks are biased upward; treat SPY/QQQ results as the clean ones."
+}

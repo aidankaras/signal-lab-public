@@ -1,0 +1,212 @@
+{
+ "trend": {
+  "is": {
+   "cagr": 0.199,
+   "sharpe": 1.5108,
+   "sortino": 1.8587,
+   "maxdd": 0.1523,
+   "total_return": 1.9685,
+   "hit_rate": 0.551,
+   "n_days": 1511,
+   "trades": 88,
+   "pf": 5.69,
+   "years_30plus": 0,
+   "ew_bh_sharpe": 1.359,
+   "spy_sharpe": 0.743
+  },
+  "oos": {
+   "cagr": 0.1193,
+   "sharpe": 0.803,
+   "sortino": 0.9917,
+   "maxdd": 0.2275,
+   "total_return": 0.9175,
+   "hit_rate": 0.5325,
+   "n_days": 1456,
+   "trades": 113,
+   "pf": 2.98,
+   "years_30plus": 1,
+   "ew_bh_sharpe": 0.809,
+   "spy_sharpe": 0.916
+  },
+  "random_p95_sharpe": 1.066,
+  "random_median_sharpe": 0.659,
+  "gate": {
+   "trades": true,
+   "maxdd": false,
+   "pf": true,
+   "beats_bh": false,
+   "beats_random95": false,
+   "not_too_good": true
+  },
+  "gate_pass": false,
+  "vs_spy": "LOSE"
+ },
+ "voltrend": {
+  "is": {
+   "cagr": 0.0612,
+   "sharpe": 1.4289,
+   "sortino": 1.7602,
+   "maxdd": 0.0493,
+   "total_return": 0.4282,
+   "hit_rate": 0.57,
+   "n_days": 1511,
+   "trades": 88,
+   "pf": 5.69,
+   "years_30plus": 0,
+   "ew_bh_sharpe": 1.359,
+   "spy_sharpe": 0.743
+  },
+  "oos": {
+   "cagr": 0.0344,
+   "sharpe": 0.7217,
+   "sortino": 0.9127,
+   "maxdd": 0.0914,
+   "total_return": 0.216,
+   "hit_rate": 0.5386,
+   "n_days": 1456,
+   "trades": 113,
+   "pf": 2.98,
+   "years_30plus": 1,
+   "ew_bh_sharpe": 0.809,
+   "spy_sharpe": 0.916
+  },
+  "random_p95_sharpe": 1.014,
+  "random_median_sharpe": 0.753,
+  "gate": {
+   "trades": true,
+   "maxdd": true,
+   "pf": true,
+   "beats_bh": false,
+   "beats_random95": false,
+   "not_too_good": true
+  },
+  "gate_pass": false,
+  "vs_spy": "LOSE"
+ },
+ "breakout": {
+  "is": {
+   "cagr": 0.2539,
+   "sharpe": 1.9563,
+   "sortino": 2.6064,
+   "maxdd": 0.1145,
+   "total_return": 2.8828,
+   "hit_rate": 0.5602,
+   "n_days": 1511,
+   "trades": 216,
+   "pf": 4.33,
+   "years_30plus": 5,
+   "ew_bh_sharpe": 1.359,
+   "spy_sharpe": 0.743
+  },
+  "oos": {
+   "cagr": 0.1084,
+   "sharpe": 0.8938,
+   "sortino": 1.12,
+   "maxdd": 0.1687,
+   "total_return": 0.8128,
+   "hit_rate": 0.52,
+   "n_days": 1456,
+   "trades": 243,
+   "pf": 1.85,
+   "years_30plus": 6,
+   "ew_bh_sharpe": 0.809,
+   "spy_sharpe": 0.916
+  },
+  "random_p95_sharpe": 1.009,
+  "random_median_sharpe": 0.607,
+  "gate": {
+   "trades": true,
+   "maxdd": true,
+   "pf": true,
+   "beats_bh": true,
+   "beats_random95": false,
+   "not_too_good": true
+  },
+  "gate_pass": false,
+  "vs_spy": "LOSE"
+ },
+ "dip": {
+  "is": {
+   "cagr": 0.0012,
+   "sharpe": 0.0491,
+   "sortino": 0.0461,
+   "maxdd": 0.1205,
+   "total_return": 0.0069,
+   "hit_rate": 0.4071,
+   "n_days": 1511,
+   "trades": 742,
+   "pf": 1.03,
+   "years_30plus": 6,
+   "ew_bh_sharpe": 1.359,
+   "spy_sharpe": 0.743
+  },
+  "oos": {
+   "cagr": 0.0473,
+   "sharpe": 0.695,
+   "sortino": 0.7445,
+   "maxdd": 0.0812,
+   "total_return": 0.3059,
+   "hit_rate": 0.3915,
+   "n_days": 1456,
+   "trades": 751,
+   "pf": 1.39,
+   "years_30plus": 5,
+   "ew_bh_sharpe": 0.809,
+   "spy_sharpe": 0.916
+  },
+  "random_p95_sharpe": 0.292,
+  "random_median_sharpe": -0.322,
+  "gate": {
+   "trades": true,
+   "maxdd": true,
+   "pf": true,
+   "beats_bh": false,
+   "beats_random95": true,
+   "not_too_good": true
+  },
+  "gate_pass": false,
+  "vs_spy": "LOSE"
+ },
+ "mom12": {
+  "is": {
+   "cagr": 0.1907,
+   "sharpe": 1.2406,
+   "sortino": 1.3439,
+   "maxdd": 0.2652,
+   "total_return": 1.8484,
+   "hit_rate": 0.5567,
+   "n_days": 1511,
+   "trades": 33,
+   "pf": 10.2,
+   "years_30plus": 0,
+   "ew_bh_sharpe": 1.359,
+   "spy_sharpe": 0.743
+  },
+  "oos": {
+   "cagr": 0.1563,
+   "sharpe": 0.8998,
+   "sortino": 1.1869,
+   "maxdd": 0.267,
+   "total_return": 1.3138,
+   "hit_rate": 0.5334,
+   "n_days": 1456,
+   "trades": 26,
+   "pf": 7.92,
+   "years_30plus": 0,
+   "ew_bh_sharpe": 0.809,
+   "spy_sharpe": 0.916
+  },
+  "random_p95_sharpe": 1.072,
+  "random_median_sharpe": 0.758,
+  "gate": {
+   "trades": false,
+   "maxdd": false,
+   "pf": true,
+   "beats_bh": true,
+   "beats_random95": false,
+   "not_too_good": true
+  },
+  "gate_pass": false,
+  "vs_spy": "LOSE"
+ }
+}

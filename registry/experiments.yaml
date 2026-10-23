@@ -1,0 +1,41 @@
+registry:
+  experiments:
+    - id: e0_rayfu_ma
+      title: "Ray Fu 20/50 MA crossover baseline"
+      params: {fast: [20], slow: [50], universe: ["SPY"]}
+      gate: "informational baseline; report vs ^GSPC buy-and-hold"
+    - id: e1_hmm_regime
+      title: "Markov/HMM regime model"
+      params: {states: [2, 3], lookback: [126, 252], universe: ["SPY", "QQQ"]}
+      gate: "paper only; must beat ^GSPC OOS to promote"
+    - id: e2_edgar_form4
+      title: "Form-4 insider cluster signal"
+      params: {cluster_days: [3, 7], min_insiders: [2, 3], cap_bucket: ["micro", "small"]}
+      gate: "backfill 2018-2024 first (>=500 signals); kill if replication AUC < 0.55"
+    - id: e3_kalshi_weather
+      title: "Kalshi weather maker-only paper logger"
+      params: {min_edge_cents: [5, 7], max_per_market: [15, 20]}
+      gate: "paper logger; live $100 probe needs 4wk paper consistency + Aidan approval"
+    - id: e4_factors
+      title: "Factor replication suite (momentum, value+prof, reversal, Alpha158, meta-label)"
+      params: {lookback: [12, 6], rebalance: ["M"], long_only: [true]}
+      gate: "paper; publish LOSEs; kill a factor if it loses to ^GSPC 3 generations running"
+    - id: e5_thesis_book
+      title: "Thesis-research 10-position paper book + random-pick control"
+      params: {max_positions: [10], max_weight: [0.10], rebalance: ["Q"]}
+      gate: "paper until beats ^GSPC 2 full quarters; demote to thematic ETF if -10pp"
+
+eval:
+  benchmark: "^GSPC"           # every experiment scored vs S&P 500, same window
+  cost_bps_per_side: 5
+  walk_forward: {train_days: 252, test_days: 63, step_days: 63}
+  self_improvement:
+    generations: true
+    mutation_k: 3              # variations per generation
+    promotion: "beat_prev_champion_oos AND beat_spy"
+    log: "registry/trials.jsonl (append-only, feeds Deflated Sharpe/PBO)"
+caps:
+  real_money: {lifetime_loss_usd: 100, total_90d_usd: 275, live_probe_usd: 100}
+  human_time_per_week_hr: 6
+  permanent_kills: ["on-chain bot contracts", "taker-only strategies",
+                    "Polymarket international", "paid data", "congressional copy-trading"]
