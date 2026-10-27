@@ -1,6 +1,6 @@
 # Signal Lab
 
-[![CI](https://github.com/aidankaras/signal-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/aidankaras/signal-lab/actions/workflows/ci.yml)
+[![CI](https://github.com/aidankaras/signal-lab-public/actions/workflows/ci.yml/badge.svg)](https://github.com/aidankaras/signal-lab-public/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Python 3.14](https://img.shields.io/badge/python-3.14-blue.svg)](pyproject.toml)
 
