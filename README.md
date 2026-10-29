@@ -16,7 +16,7 @@ verdict — failures included.
 Most published strategy results — especially those from retail "AI trading bot" posts —
 do not survive out-of-sample testing with realistic costs. This lab exists to run those
 claims through an honest evaluation pipeline and record what happens. ~20 strategy
-classes have been tested (e00–e19; e11 and e15 were never run): every concluded
+classes have been tested (e00–e20; e11 and e15 were never run): every concluded
 experiment loses to SPY out-of-sample after costs; e16b/e17 are live forward tests
 (verdict ~mid-Jan 2027), e18 is running, e03/e05 are on their paper clocks. The
 negative results are the product: the harness, the controls, and the discipline of
@@ -45,6 +45,7 @@ publishing verdicts that do not flatter the work.
 | [e16b/e17](forward/SPEC-e16b-e17.md) | Live forward arms of e16/e17 on paper accounts | running — verdict ~mid-Jan 2027 |
 | [e18](experiments/e18-newtoken-logger/) | New crypto token listing logger + scorer | running |
 | [e19](experiments/e19-foundation-forecast/) | Zero-shot Kronos / TimesFM forecasts on 14 ETFs | **LOSE** — 0/12 trials BEAT (Bonferroni alpha 0.0042) |
+| [e20](experiments/e20-fx-break-retest/) | Retail FX "break → retest → engulfing" setup, 10 pairs, 2015–2026 | **LOSE** — holdout (2022+) mean −0.04R/trade, t −0.29, n=152; 0/6 variants reach t≥2 |
 
 Each experiment folder is self-contained — runner code, report, and `SPEC.md`
 (the pre-registration written before the run).
