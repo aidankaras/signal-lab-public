@@ -17,7 +17,8 @@ Most published strategy results — especially those from retail "AI trading bot
 do not survive out-of-sample testing with realistic costs. This lab exists to run those
 claims through an honest evaluation pipeline and record what happens. ~20 strategy
 classes have been tested (e00–e20; e11 and e15 were never run): every concluded
-experiment loses to SPY out-of-sample after costs; e16b/e17 are live forward tests
+experiment loses out-of-sample after costs (to SPY for equity strategies,
+to random-entry and trend-following controls for FX); e16b/e17 are live forward tests
 (verdict ~mid-Jan 2027), e18 is running, e03/e05 are on their paper clocks. The
 negative results are the product: the harness, the controls, and the discipline of
 publishing verdicts that do not flatter the work.
