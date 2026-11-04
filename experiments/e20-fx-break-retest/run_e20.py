@@ -284,7 +284,8 @@ def random_control(df_by_pair, sl_dists, R, n_strats=2000, seed=20, n_per=80):
     out = []
     for s in range(n_strats):
         rs = []
-        for _ in range(n_per):
+        filled = 0  # count accepted trades, not draws (fix: skipped draws
+        while filled < n_per:  # shrank effective n ~70%, inflating p95)
             pair = PAIRS[rng.integers(len(PAIRS))]
             df = df_by_pair[pair]
             pip = pipmap[pair]
@@ -305,6 +306,7 @@ def random_control(df_by_pair, sl_dists, R, n_strats=2000, seed=20, n_per=80):
             r = resolve_trade(pair, df, tr, R)
             if r:
                 rs.append(r["net_R"])
+                filled += 1
         if rs:
             out.append(float(np.mean(rs)))
     return out
