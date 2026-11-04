@@ -65,6 +65,22 @@ changes a trading rule; the primary trade list is byte-identical before/after.
    pairs per date: −2.4%/yr at 2.8% vol.
 4. **G3** compared the full-period strategy curve against a holdout-only
    baseline; now both use the holdout, as the SPEC requires.
+5. **Random-entry control sizing** (found 2026-11-04 during the follow-up,
+   e20v3) — `random_control` counted draws, not accepted trades, and silently
+   skipped non-eligible draws (trigger hours 07–17, Mon–Wed), so each random
+   strategy resolved far fewer trades than nominal and the G2 p95 (+0.62R) was
+   inflated. Fixed to draw until exactly `n_per` trades resolve. This gate
+   FAILED for the primary either way (the strategy mean is negative), so the
+   LOSE verdict is unchanged; if anything the corrected control is a *lower*
+   bar, making the LOSE more decisive.
+
+## Follow-up (Nov 2026): the promising ablation was tested and failed
+The `abl_no_trigger` variant (enter on retest touch, no engulfing candle) was
+subsequently pre-registered and tested out-of-sample in two rounds:
+untouched 2003–2014 data (n=624, +0.25R, t=3.34, but failed the pre-registered
+gate and decays to ~0 by 2012–14) and 2022+ (n=296, +0.11R, t=1.01, LOSE vs
+buy-and-hold S&P; ~0R in 2025–26). **The edge does not survive; FX lane
+closed.** Details in the private lab registry, not published here.
 
 ## Caveats
 - 152 holdout trades is enough to reject a strong edge but not a small one
