@@ -23,7 +23,7 @@ sys.path.insert(0, ROOT)
 from harness import data
 from harness.evaluator import log_trial
 
-UA = {"User-Agent": "Trading Research Lab (contact: YOUR_EMAIL)"}
+UA = {"User-Agent": "SignalLab research script (contact: YOUR_EMAIL; SEC requires a real contact)"}
 TR = os.path.join(ROOT, "registry", "trials.jsonl")
 OUT = os.path.join(ROOT, "reports", "e13-cio.json")
 TICKERS = [t for t in data.BROAD if t != "SPY"]

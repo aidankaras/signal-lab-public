@@ -21,4 +21,3 @@ No server, no live data.
 - Persist daily return series per experiment so equity-curve charts (e.g. e10 v0 vs v1) can be drawn
   from committed data; today only summary metrics are stored.
 - Fixture dataset to run the experiment runners offline in CI.
-- Merge e16 (branch `exp/e16-daily-direction`).

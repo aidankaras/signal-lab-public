@@ -2,7 +2,7 @@
 
 Logs daily mid/bid/ask for live Kalshi weather markets to registry/e3-paper.jsonl.
 PAPER ONLY: never places an order. The pre-registered live probe ($100 bankroll, maker-only,
-5c min-edge gate) needs 4 weeks of paper consistency + Aidan's approval per test first.
+5c min-edge gate) needs 4 weeks of paper consistency + owner approval per test first.
 Wire as a daily no_agent cron:  `python3 run_e3_logger.py`  (prints one summary line).
 
 Note on the 5c gate: v0 measures spread/liquidity noise, not edge — edge estimation needs the

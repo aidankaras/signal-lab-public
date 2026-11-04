@@ -5,6 +5,8 @@ Tests a popular retail FX day-trading setup (trend filter, round-number level,
 2015–2026, with a once-scored 2022+ holdout.
 
 **Verdict: LOSE** — holdout mean -0.04R per trade, t -0.29, n 152.
+Follow-up (Nov 2026): the best development-period ablation (no engulfing trigger) was
+pre-registered and tested out of sample twice and also failed; FX lane closed.
 Full write-up: [`REPORT.md`](REPORT.md). Pre-registration: [`SPEC.md`](SPEC.md).
 
 | file | purpose |

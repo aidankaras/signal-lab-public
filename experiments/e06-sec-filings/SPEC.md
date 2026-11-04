@@ -25,7 +25,7 @@ had its gate passed.
 - Walk-forward only, no lookahead, costs ≥5bps/side, scored vs ^GSPC and random-pick control
   over identical windows; trials logged to registry/trials.jsonl.
 - Agent-arm LLM spend metered (repo has a spend ledger) — stays within the $30/mo lab LLM
-  ceiling; no premium models without Aidan's approval.
+  ceiling; no premium models without owner approval.
 - Kill: agent arm shows IC ≤ baseline (≈0) on the full scored run → the honest verdict is
   "LLM agents add nothing on SEC filings at this scale" and the experiment closes.
 - Never converts to a live strategy without beating e0 AND SPY AND random-pick on holdout.
@@ -34,9 +34,3 @@ had its gate passed.
 1. Run the pending agent-arm scored run (needs its venv/deps; Docker).
 2. Merge the review-arm protocol.
 3. Fold prediction-ledger outputs into lab verdict machinery.
-
-## Name retirement
-The name "arbiter" is retired (Aidan, 2026-10-18). GitHub repo RENAMED 2026-10-18 to
-`aidankaras/sec-filings-e6` (github.com/aidankaras/arbiter auto-redirects). Repo description
-still references the pipeline, not the old name; resume now lists the Trading Research Lab
-instead of the old project name. Local vendored copy uses "SecFilings"/"review arm" only.

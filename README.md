@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/aidankaras/signal-lab-public/actions/workflows/ci.yml/badge.svg)](https://github.com/aidankaras/signal-lab-public/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Python 3.14](https://img.shields.io/badge/python-3.14-blue.svg)](pyproject.toml)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
 
 ![Out-of-sample Sharpe vs SPY per experiment](docs/img/oos_sharpe_vs_spy.png)
 
@@ -15,11 +15,11 @@ verdict — failures included.
 
 Most published strategy results — especially those from retail "AI trading bot" posts —
 do not survive out-of-sample testing with realistic costs. This lab exists to run those
-claims through an honest evaluation pipeline and record what happens. ~20 strategy
-classes have been tested (e00–e20; e11 and e15 were never run): every concluded
-experiment loses out-of-sample after costs (to SPY for equity strategies,
-to random-entry and trend-following controls for FX); e16b/e17 are live forward tests
-(verdict ~mid-Jan 2027), e18 is running, e03/e05 are on their paper clocks. The
+claims through an honest evaluation pipeline and record what happens. Nineteen
+experiments are indexed below (e00–e22; e11 and e15 were never run, e21 was specified
+but not run): every concluded experiment loses out-of-sample after costs (to SPY for
+equity strategies, to random-entry and trend-following controls for FX). Five forward
+tests are still pending (see [In progress](#in-progress-forward-paper-only)). The
 negative results are the product: the harness, the controls, and the discipline of
 publishing verdicts that do not flatter the work.
 
@@ -30,9 +30,9 @@ publishing verdicts that do not flatter the work.
 | [e00](experiments/e00-ma-baseline/) | MA-crossover baseline (benchmark, not a claim) | informational |
 | [e01](experiments/e01-hmm-regime/) | HMM regime detection | LOSE |
 | [e02](experiments/e02-insider-filings/) | Insider Form-4 filing clusters predict returns | LOSE — AUC 0.498 vs 0.55 kill gate; e2 v2 (cluster events): **LOSE** — mean −1.53%, t −2.30, n=120, 2011–2017 window |
-| [e03](experiments/e03-kalshi-logger/) | Kalshi maker-spread paper logger | running — 4-week paper clock to ~2026-11-15 |
+| [e03](experiments/e03-kalshi-logger/) | Kalshi maker-spread paper logger | PENDING — see [In progress](#in-progress-forward-paper-only) |
 | [e04](experiments/e04-factor-tilts/) | Classic factor tilts (momentum, low-vol, reversal, trend) | LOSE — no factor passes both regime splits |
-| [e05](experiments/e05-thesis-book/) | Thesis-research 10-position paper book vs SPY, QTUM and random-pick control | PENDING — seeded 2026-10-20, demote rule at 2 quarters |
+| [e05](experiments/e05-thesis-book/) | Thesis-research 10-position paper book vs SPY, QTUM and random-pick control | PENDING — see [In progress](#in-progress-forward-paper-only) |
 | [e06](experiments/e06-sec-filings/) | SEC-filing features forecast 5-session abnormal returns | LOSE — IC 0.017, t 0.11 |
 | [e07](experiments/e07-daytrading-setups/) | Claimed day-trading setups (ORB, VWAP reclaim/fade, gap-and-go) | reclaim/fade LOSE at random-entry control; ORB SUSPECT |
 | [e08](experiments/e08-lstm/) | LSTM on daily price sequences | LOSE — IC −0.0082 (anti-predictive) |
@@ -43,10 +43,24 @@ publishing verdicts that do not flatter the work.
 | [e13](experiments/e13-cio-framework/) | "CIO framework" LLM prompt, decomposed | LOSE — Sharpe 0.54 vs SPY 0.64 |
 | [e14](experiments/e14-thirdparty-etf-rules/) | Shared bot: 5 rules (trend, vol-trend, breakout, dip, 12m momentum) on 7 ETFs/crypto | LOSE — 0/5 pass own gate (v0 and v1 with the shared params); none beats SPY |
 | [e16a](experiments/e16-daily-direction/) | Daily SPY open->close direction: logit + HGB walk-forward, 20 bps/round trip, TP/SL overlays | **LOSE** — 0/4 variants pass; AUC 0.495 (logit) / 0.520 (HGB); net Sharpe −1.6 to −3.5 vs SPY B&H 0.86; always-long intraday gross 0.43 |
-| [e16b/e17](forward/SPEC-e16b-e17.md) | Live forward arms of e16/e17 on paper accounts | running — verdict ~mid-Jan 2027 |
-| [e18](experiments/e18-newtoken-logger/) | New crypto token listing logger + scorer | running |
+| [e16b/e17](forward/SPEC-e16b-e17.md) | Live forward arms of e16/e17 on paper accounts | PENDING — see [In progress](#in-progress-forward-paper-only) |
+| [e18](experiments/e18-newtoken-logger/) | New crypto token listing logger + scorer | PENDING — see [In progress](#in-progress-forward-paper-only) |
 | [e19](experiments/e19-foundation-forecast/) | Zero-shot Kronos / TimesFM forecasts on 14 ETFs | **LOSE** — 0/12 trials BEAT (Bonferroni alpha 0.0042) |
-| [e20](experiments/e20-fx-break-retest/) | Retail FX "break → retest → engulfing" setup, 10 pairs, 2015–2026 | **LOSE** — holdout (2022+) mean −0.04R/trade, t −0.29, n=152; 0/6 variants reach t≥2 |
+| [e20](experiments/e20-fx-break-retest/) | Retail FX "break → retest → engulfing" setup, 10 pairs, 2015–2026 | **LOSE** — holdout (2022+) mean −0.04R/trade, t −0.29, n=152; 0/6 variants reach t≥2. Follow-up: the best dev-period ablation failed two further pre-registered OOS tests (2003–14: gate fail; 2022+: +0.11R, t 1.01); FX lane closed |
+| [e22](experiments/e22-tsmom/) | Cross-asset vol-targeted 12-1 time-series momentum, 8 ETFs, 2015+ holdout | **LOSE** — best holdout Sharpe 0.52 (long-only) vs SPY 0.80; long/short variants ≈ 0 |
+
+Verdict labels: **BEAT** (passes every pre-registered gate), **LOSE** (fails at least one), **PENDING** (forward test, not yet scoreable), *informational* (benchmark, no claim), SUSPECT (passes a gate but the universe/sample is not trustworthy, so not promoted).
+
+### In progress (forward, paper-only)
+
+No real money is used. Verdicts are scored on public prices by pre-registered gates, and are published either way.
+
+| Experiment | What | Earliest verdict |
+|---|---|---|
+| [e16b / e17](forward/SPEC-e16b-e17.md) | Daily SPY long/flat call (e16b) and single-ETF pick (e17) recorded before the open | ≥60 scored days, ~mid-Jan 2027 |
+| [e03](experiments/e03-kalshi-logger/) | Kalshi maker-spread paper quotes | 4-week paper clock ends ~2026-11-15 (a consistency check, not a profit claim) |
+| [e18](experiments/e18-newtoken-logger/) | New-token risk filter vs random new tokens | ≥6 weeks logging and ≥200 approved tokens, no earlier than 2026-12-11 |
+| [e05](experiments/e05-thesis-book/) | 10-position thesis book vs SPY, thematic ETF and random-pick control | seeded 2026-10-20; demotion rule evaluated after 2 quarters (~Apr 2027) |
 
 Each experiment folder is self-contained — runner code, report, and `SPEC.md`
 (the pre-registration written before the run).
@@ -62,11 +76,12 @@ long-only — both are flagged in the reports rather than hidden.
   total return on today's mega-caps (e10 v0, verdict BEAT). On point-in-time S&P 500 membership
   it is net Sharpe 0.54 vs SPY 0.97 and **LOSE** (e10 v1).
 - **Costs and turnover eat gross edge.** e10 v1 gross Sharpe 0.80 falls to 0.54 net at 10 bps/side
-  (0.63 turnover per rebalance). Daily-direction models on SPY (e16a, on branch `exp/e16-daily-direction`)
+  (0.63 turnover per rebalance). Daily-direction models on SPY (e16a)
   show the extreme case: 20 bps round trip turns a gross 0.43 into net Sharpe −1.6 to −3.5.
 - **Random controls matter.** On a survivor-biased universe 16 of 20 random 3-stock picks beat
   SPY, so beating SPY is not evidence; verdicts require beating the random-pick median and
   equal-weight universe too. e12's real cointegrated pairs underperform random pairs.
+- **Trend momentum faded.** Classic vol-targeted 12-1 time-series momentum has dev Sharpe 0.60 (t 2.59) but ≈0 after 2014; best holdout Sharpe 0.52 vs SPY 0.80 (e22).
 - **Negative results are the output.** LSTM IC is anti-predictive (−0.0082), the local LLM is a
   constant-UP predictor, insider clusters score AUC 0.498 vs a 0.55 gate.
 
@@ -103,10 +118,9 @@ long-only — both are flagged in the reports rather than hidden.
 
 ## Stack
 
-Python 3.14 · pandas · NumPy · SciPy · scikit-learn · PyTorch (CPU) · llama.cpp ·
-yfinance · SEC EDGAR APIs. Heavy runs execute on a dedicated compute box;
-scheduled research jobs run as cron tasks. The LLM-analyst experiment ran a
-Qwen2.5-1.5B GGUF locally through llama.cpp.
+Python 3.11+ · pandas · NumPy · SciPy · scikit-learn · PyTorch (CPU) · llama.cpp ·
+yfinance · SEC EDGAR APIs. The LLM-analyst experiment (e09) ran a Qwen2.5-1.5B GGUF
+locally through llama.cpp; the forward loggers run as scheduled jobs.
 
 ## Layout
 
@@ -132,9 +146,22 @@ python docs/make_charts.py /tmp/charts    # regenerates the e10 v0->v1 chart fro
 Reproduce one result from raw data (needs network; downloads prices via yfinance):
 
 ```bash
+python experiments/e22-tsmom/run_e22.py data out        # fast (~2 min), prices via yfinance; compare out/results.json with experiments/e22-tsmom/results/
 python experiments/e12-pairs-cointegration/run_e12.py   # pairs walk-forward, compare with e12-pairs.md
 python -m tests.smoke                                   # e0/e1/control causality + verdict on real data
 ```
+
+## Method in one paragraph
+
+Each experiment starts with a `SPEC.md` committed before any run: hypothesis, data, exact rules,
+variant count, gates and kill criteria. Development data may be inspected; the holdout is scored
+once. Costs are charged in every test; the strategy is compared to buy-and-hold and to a random
+control on identical dates; every trial, winners and losers, is appended to the trial registry so
+the number of tries is on record. Results from third-party "AI trading" claims are expected to
+fail this bar, and nearly all do, which is the finding. Data and universe caveats are stated in
+each report (see Limitations).
+
+Runners that call SEC EDGAR (e02, e06, e13) set a placeholder `User-Agent`; replace `YOUR_EMAIL` with a real contact before running them.
 
 ## Operating rules
 
@@ -150,6 +177,12 @@ subscriptions, copy-trading of public officials' filings.
   verdicts or a random-control baseline, which is this lab's main addition.
 - [aidankaras/sec-filings-e6](https://github.com/aidankaras/sec-filings-e6) — companion
   repo for the SEC-filing data pipeline behind [e06](experiments/e06-sec-filings/).
+
+## Disclaimer
+
+Research code and results for educational purposes. Nothing here is investment advice or a
+recommendation to trade. Backtests are not predictions; past performance does not indicate
+future results. Use at your own risk.
 
 ## License
 

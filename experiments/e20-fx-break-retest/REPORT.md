@@ -21,7 +21,7 @@ win rate 26%) after spread and slippage. Development-period mean was
 | gate | requirement | result | pass |
 |--|--|--|--|
 | G1 | mean R > 0 and t ≥ 2 | -0.04R, t -0.29 | no |
-| G2 | mean R > p95 of 2000 random-entry strategies | p95 +0.62R (control mean -0.11R) | no |
+| G2 | mean R > p95 of 2000 random-entry strategies | p95 +0.62R (control mean -0.11R; pre-fix control, see bug 5) | no |
 | G3 | ret/vol > MA20/100 trend-follow baseline | -0.18 vs -0.85 | yes (baseline also loses money) |
 | G4 | ≥ 60 holdout trades | 152 | yes |
 

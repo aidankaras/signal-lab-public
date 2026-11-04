@@ -1,5 +1,5 @@
 # e16a — daily SPY open->close direction (trained models)
-Pre-registered in SPEC.md (committed before the run). Run once: `python on experiments/e16-daily-direction/run_e16.py"`.
+Pre-registered in SPEC.md (committed before the run). Run once: `python experiments/e16-daily-direction/run_e16.py`.
 **Verdict: LOSE.** 0/4 variants pass the gate. Key facts (OOS 2010-01-04..2026-10-20, 4225 days, up-day base rate 54.25%):
 - Logit AUC 0.495 (no skill); HGB AUC 0.520 (fails >0.52 by a hair); HGB accuracy 52.5% < always-up 54.3%.
 - At 20 bps/round trip any daily-intraday strategy is crushed: always-long open->close net Sharpe -3.49 (gross +0.43); SPY B&H net Sharpe 0.86.

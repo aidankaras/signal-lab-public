@@ -2,7 +2,7 @@
 
 Why v1 despite v0 kill: v0 counted all Form-4 filings (mostly grants/sales = noise). The literature signal
 (Lakonishok-Lee 2001, Cohen-Malloy-Pomorski 2012) is open-market *purchases* (code P), clustered. The SEC bulk
-Form 3/4/5 data sets (2018q1–2025q4, 32 files, UA YOUR_EMAIL) make the buy/sell split cheap. One shot; no grid.
+Form 3/4/5 data sets (2018q1–2025q4, 32 files, descriptive User-Agent) make the buy/sell split cheap. One shot; no grid.
 
 Data: SUBMISSION + REPORTINGOWNER + NONDERIV_TRANS. Keep DOCUMENT_TYPE 4/4A, TRANS_CODE == P, shares*price >= $10k.
 Universe: point-in-time S&P 500 (experiments/e10-survivorship membership + sp500pit prices), member on FILING_DATE.

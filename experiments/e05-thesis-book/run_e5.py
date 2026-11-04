@@ -3,7 +3,7 @@
 Spec: experiments/experiment-5-thesis-research.md (+ SPEC.md here). Marks the 10-position
 paper book to market vs ^GSPC (SPY), QTUM, and a random-pick control drawn from the SAME
 pre-registered candidate pool. Applies the demote rule. NEVER places orders.
-State: registry/e5-portfolio.json (weekly cron 955fdb31f7de appends to decision_log).
+State: registry/e5-portfolio.json (a weekly scheduled job appends to decision_log).
 """
 import json, os, sys, time
 import numpy as np

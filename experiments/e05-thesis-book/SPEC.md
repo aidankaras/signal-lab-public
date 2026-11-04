@@ -1,6 +1,6 @@
 # e5 — Thesis-research paper book (pre-registered 2026-10-20)
 
-Source spec: `../experiment-5-thesis-research.md` (Aidan, 2026-10-18). Paper only, never real orders.
+Written 2026-10-18. Paper only, never real orders.
 
 - Book: 10 positions, 10% each, equal-weight entry on 2026-10-20 close, rebalance quarterly,
   every pick carries a written thesis and falsifier (in `registry/e5-portfolio.json`).
@@ -12,4 +12,4 @@ Source spec: `../experiment-5-thesis-research.md` (Aidan, 2026-10-18). Paper onl
   pipeline survives only as the weekly digest.
 - Verdict PENDING until 2 full quarters. Costs ignored at entry (buy-and-hold, 5bps/side negligible).
 - Known bias: picks and pool were chosen by the author knowing the hot themes; control shares that bias.
-- Not built: automated weekly thesis radar/candidate tree (cron 955fdb31f7de does the web pass).
+- Not built: automated weekly thesis radar/candidate tree (a scheduled job does the web pass).

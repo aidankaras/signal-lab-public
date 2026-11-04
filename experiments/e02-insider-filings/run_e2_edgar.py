@@ -16,7 +16,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, ROOT)
 import pandas as pd
 
-UA = {"User-Agent": "Trading Research Lab (contact: YOUR_EMAIL)"}
+UA = {"User-Agent": "SignalLab research script (contact: YOUR_EMAIL; SEC requires a real contact)"}
 # fixed 2018 large caps (no survivorship from picking today's names); CUSIP->CIK via SEC ticker file
 TICKERS = ["AAPL", "MSFT", "XOM", "JPM", "JNJ", "PG", "WMT", "KO", "PFE", "VZ", "T", "INTC", "IBM",
            "GE", "BA", "CAT", "MMM", "DIS", "CSCO", "ORCL", "CVX", "MCD", "NKE", "HD", "UNH", "ABT",

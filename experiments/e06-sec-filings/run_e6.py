@@ -4,7 +4,7 @@ Replaces the legacy pipeline (reference/sec-filings-legacy/, kept for provenance
 lab's own stack: no Docker, no Postgres, no subscription LLM runtime. Free EDGAR + yfinance
 + a dedicated venv only.
 
-Pre-registered v1 scope (2026-10-18, Aidan: "fold into our structure"):
+Pre-registered v1 scope (2026-10-18, owner: fold into the lab structure):
   Universe : the lab's fixed 40-ticker BROAD list (NOT whole-EDGAR like the legacy pipeline;
              smaller sample — flagged, honest).
   Events   : every Form 4 filed 2026-07-01..2026-09-09 by those issuers. Fields parsed from
@@ -35,7 +35,7 @@ sys.path.insert(0, ROOT)
 from harness import data
 from harness.evaluator import log_trial
 
-UA = {"User-Agent": "Trading Research Lab (contact: YOUR_EMAIL)"}
+UA = {"User-Agent": "SignalLab research script (contact: YOUR_EMAIL; SEC requires a real contact)"}
 TICKERS = [t for t in data.BROAD if t != "SPY"]
 START, END = "2026-07-01", "2026-09-09"
 CACHE = os.path.join(ROOT, "data", "cache", "e6_xml")

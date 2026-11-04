@@ -15,4 +15,4 @@ e17 BEAT requires ALL: mean daily net > SPY open->close net mean; > p95 of 2000 
 Otherwise LOSE; lane closed, no re-tuning on the same data. Missed days are skipped, not filled.
 
 ## Caps
-Paper only. No real money without gates cleared AND Aidan's explicit approval.
+Paper only. No real money without gates cleared AND the owner's explicit approval.

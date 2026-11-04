@@ -15,7 +15,7 @@ registry:
     - id: e3_kalshi_weather
       title: "Kalshi weather maker-only paper logger"
       params: {min_edge_cents: [5, 7], max_per_market: [15, 20]}
-      gate: "paper logger; live $100 probe needs 4wk paper consistency + Aidan approval"
+      gate: "paper logger; live $100 probe needs 4wk paper consistency + owner approval"
     - id: e4_factors
       title: "Factor replication suite (momentum, value+prof, reversal, Alpha158, meta-label)"
       params: {lookback: [12, 6], rebalance: ["M"], long_only: [true]}

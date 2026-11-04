@@ -1,7 +1,7 @@
 # e5 — Thesis-research buy-and-hold book (the paper portfolio)
 
 Pre-registered 2026-10-18. Spec is binding: changes require a dated addendum below and
-Aidan's sign-off. Paper only — never a real order.
+owner sign-off. Paper only — never a real order.
 
 ## Question
 Can weekly automated research (news, EDGAR Form-4 clusters, arXiv/sector theses) produce a
@@ -30,8 +30,8 @@ The only lane whose holding period (weeks–quarters, not minutes) fits a $100�
   shares, status}, decision log (one entry per weekly pass).
 - `registry/trials.jsonl`: one append per weekly pass (stage "paper", origin "e5-thesis")
   so the trial-count overfit accounting applies to this lane too.
-- Weekly cron `955fdb31f7de` (Sun 16:00Z): research → falsifier evaluation → decisions →
-  digest to Telegram. Digest MUST report performance vs S&P and vs random-pick, and MUST
+- Weekly scheduled job (Sun 16:00Z): research → falsifier evaluation → decisions →
+  weekly digest. Digest MUST report performance vs S&P and vs random-pick, and MUST
   state plainly if behind the random control (publish LOSEs).
 
 ## Gates

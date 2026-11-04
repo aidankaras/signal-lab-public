@@ -4,4 +4,4 @@
 
 Run: `python experiments/e05-thesis-book/run_e5.py` (add `--seed` only to re-initialise;
 it overwrites state). State is written to `registry/e5-portfolio.json`.
-Report: `e5-report.md`. See `SPEC.md`. Day-0 "percentile vs random" prints 1.0 from float ties — ignore until prices move.
+Report: `e5-thesis-book.md` (latest snapshot; `run_e5.py` regenerates it as `e5-report.md`). See `SPEC.md`. Day-0 "percentile vs random" prints 1.0 from float ties — ignore until prices move.
