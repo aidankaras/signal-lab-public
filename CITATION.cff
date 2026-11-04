@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Signal Lab"
+abstract: "Walk-forward backtesting harness for pre-registered trading-strategy experiments against buy-and-hold and a random-entry control."
+type: software
+authors:
+  - family-names: Karas
+    given-names: Aidan
+    affiliation: Boston University
+repository-code: "https://github.com/aidankaras/signal-lab-public"
+license: MIT
+version: 1.0.0
+date-released: 2026-11-04
+keywords: [backtesting, pre-registration, evaluation]
