@@ -51,7 +51,7 @@ def main():
                     f"annualized volatility {vol:.0%}, 5-day average daily move {vma:+.2%}, "
                     f"{n_f4} insider Form-4 transactions in the last 30 days. "
                     f"Will {t} outperform the S&P 500 over the next 5 trading sessions? "
-                    f"Answer with exactly one word: UP or DOWN."
+                    f"Answer with exactly one word, UP or DOWN.\nAnswer:"
                 ),
             })
     os.makedirs(os.path.dirname(OUT), exist_ok=True)

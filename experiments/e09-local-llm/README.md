@@ -1,6 +1,6 @@
 # E9 — local llm
 
-**Verdict: LOSE - constant-UP predictor, accuracy = base rate 47.7%**
+**Verdict: INVALID — the "constant-UP" result was an output-parser bug; parser fixed, pending re-run.** See `e9-llm-analyst.md`.
 
 Each experiment folder is self-contained: runner code, its report (markdown + JSON),
 and `SPEC.md` — the pre-registration written before the run (grids, gates, kill criteria).
