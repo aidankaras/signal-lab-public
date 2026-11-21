@@ -2,7 +2,7 @@
 import sys, os, numpy as np, pandas as pd, torch
 MODEL, OUT = sys.argv[1], sys.argv[2]
 SH, NSH = (int(sys.argv[3]), int(sys.argv[4])) if len(sys.argv) > 4 else (0, 1)
-SRC = os.path.expanduser("~/tlab/e19")
+SRC = os.environ.get("E19_DATA", os.path.join(os.path.dirname(os.path.abspath(__file__)), "data"))
 TICK = "SPY QQQ IWM DIA XLK XLF XLE XLV XLY XLI XLP XLU TLT GLD".split()
 T0 = pd.Timestamp("2024-07-01"); CTX = 512; H = 5
 torch.manual_seed(19); np.random.seed(19)

@@ -1,6 +1,8 @@
 """No-agent cron, mid-afternoon ET: flatten any SPY paper position with a market-on-close sell; log the open fill."""
 import datetime as dt
-from common import FILLS, NY, append, alpaca
+
+from common import FILLS, NY, alpaca, append
+
 ap = alpaca(); day = dt.datetime.now(NY).date().isoformat()
 try: o = ap(f"/v2/orders:by_client_order_id?client_order_id=e16b-open-{day}")
 except Exception: o = None

@@ -38,7 +38,7 @@ def load():
 
 def build(px):
     s = px["SPY"][["Open", "High", "Low", "Close"]].dropna()
-    o, h, l, c = s.Open, s.High, s.Low, s.Close
+    o, c = s.Open, s.Close
     f = pd.DataFrame(index=s.index)
     c1 = c.shift(1)
     f["gap"] = o / c1 - 1

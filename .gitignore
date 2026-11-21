@@ -1,5 +1,6 @@
 # caches / bytecode
 data/cache/
+data/edgar/
 __pycache__/
 *.pyc
 .pytest_cache/

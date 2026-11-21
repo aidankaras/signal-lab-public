@@ -4,4 +4,4 @@
 - Verdict: **LOSE** (gate: IC t > 2)
 - Model: 2-layer LSTM(32) on 20-session sequences, walk-forward refit yearly,
   5-session embargo, early stopping on the fit window's own holdout.
-- Caveat: survivorship-biased universe; see experiments/experiment-8-deep-learning.md
+- Caveat: survivorship-biased universe; see experiments/e08-lstm/SPEC.md

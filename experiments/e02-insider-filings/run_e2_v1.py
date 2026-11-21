@@ -5,8 +5,8 @@ HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(os.pat
 sys.path.insert(0, ROOT)
 from harness.data import CACHE
 from harness.evaluator import log_trial
-EDGAR = os.path.expanduser(os.environ.get("E2_EDGAR","~/tlab/edgar")); MINUSD=float(os.environ.get("E2_MINUSD","0")); VER=os.environ.get("E2_VER","v1"); H, COST, NCTRL, SEED = 21, 0.002, 2000, 0
-E10 = os.path.join(ROOT, "experiments", "e10-survivorship")
+EDGAR = os.path.expanduser(os.environ.get("E2_EDGAR", os.path.join(ROOT, "data", "edgar"))); MINUSD=float(os.environ.get("E2_MINUSD","0")); VER=os.environ.get("E2_VER","v1"); H, COST, NCTRL, SEED = 21, 0.002, 2000, 0
+E10 = os.path.join(ROOT, "experiments", "e10-gbm-ranker")   # sp500_membership.json (fetch_membership.py)
 
 def load_buys():
     out = []

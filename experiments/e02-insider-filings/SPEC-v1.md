@@ -5,7 +5,7 @@ Why v1 despite v0 kill: v0 counted all Form-4 filings (mostly grants/sales = noi
 Form 3/4/5 data sets (2018q1–2025q4, 32 files, descriptive User-Agent) make the buy/sell split cheap. One shot; no grid.
 
 Data: SUBMISSION + REPORTINGOWNER + NONDERIV_TRANS. Keep DOCUMENT_TYPE 4/4A, TRANS_CODE == P, shares*price >= $10k.
-Universe: point-in-time S&P 500 (experiments/e10-survivorship membership + sp500pit prices), member on FILING_DATE.
+Universe: point-in-time S&P 500 (e10 v1 membership, now `experiments/e10-gbm-ranker/sp500_membership.json`, + sp500pit prices), member on FILING_DATE.
 
 Event: on FILING_DATE d, ticker has >= 2 distinct reporting owners with qualifying P buys filed in (d-30d, d].
 Dedupe: at most one event per ticker per 63 trading days. Known only after filing -> entry = close of the first

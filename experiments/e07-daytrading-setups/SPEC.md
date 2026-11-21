@@ -55,6 +55,6 @@ given every prior lane, LOSE; the interesting output is per-setup expectancy aft
   invalid: long-only simulator scored short exits as fake wins; fixed before reporting.)
 - e7d gap-and-go: 3 qualifying trades in the window — untestable at this sample size.
 
-The two setups that survive as hypotheses for replication are logged in HANDOFF; the
+The two setups that survive as hypotheses for replication were logged in private notes; the
 central result stands: after costs, day-trading setups cluster at the random-entry
 control. That is what the claims never publish.

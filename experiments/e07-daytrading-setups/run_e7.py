@@ -79,7 +79,6 @@ def orb_trades(df):
         vwap = (d.Close * d.Volume).cumsum() / d.Volume.cumsum()
         after = d.iloc[3:]
         for i in range(len(after)):
-            ts = after.index[i]
             if after.Close.iloc[i] > hi and after.Close.iloc[i] > vwap.iloc[3 + i]:
                 risk = after.Close.iloc[i] - lo
                 if risk <= 0: continue

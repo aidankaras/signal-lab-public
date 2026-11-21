@@ -1,6 +1,10 @@
-"""Shared helpers for the e16b/e17 forward arm. Stdlib only (runs on the VPS)."""
-import json, os, urllib.request, datetime as dt
+"""Shared helpers for the e16b/e17 forward arm. Stdlib only (runs as scheduled jobs)."""
+import datetime as dt
+import json
+import os
+import urllib.request
 from zoneinfo import ZoneInfo
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 CALLS = os.path.join(HERE, "e16b_calls.jsonl"); FILLS = os.path.join(HERE, "e16b_alpaca.jsonl")
 NY = ZoneInfo("America/New_York")
