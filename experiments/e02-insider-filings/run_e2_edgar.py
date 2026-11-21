@@ -104,6 +104,7 @@ def main():
            "auc_cluster_gt_random": auc, "gate_auc_0.55": auc >= 0.55, "window": [START, END],
            "limit": "counts-only signal (no buy/sell split); AUC<0.55 kills v0"}
     print(json.dumps(res, indent=1))
+    os.makedirs(os.path.join(ROOT, "reports"), exist_ok=True)
     json.dump(res, open(os.path.join(ROOT, "reports", "e2-backfill.json"), "w"), indent=1)
     lab.to_csv(os.path.join(ROOT, "reports", "e2-signals.csv"), index=False)
 

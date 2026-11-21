@@ -2,4 +2,3 @@
 pytest
 ruff
 pre-commit
-matplotlib

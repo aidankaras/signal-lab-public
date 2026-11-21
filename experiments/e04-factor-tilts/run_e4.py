@@ -9,6 +9,7 @@ from harness.verdict import control_stats, strict
 from harness.strategies.factors import FACTORS
 
 TR = os.path.join(ROOT, "registry", "trials.jsonl")
+os.makedirs(os.path.join(ROOT, "reports"), exist_ok=True)  # reports/ is not committed
 close = data.fetch(data.BROAD, start="2013-01-01", refresh="--refresh" in sys.argv, name="broad").dropna()
 bench = spy_returns(close)
 univ = close.drop(columns=["SPY"])
