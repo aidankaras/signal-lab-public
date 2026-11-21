@@ -1,5 +1,16 @@
 # e10 — gradient-boosted cross-sectional ranking 2026-10-19
 
+> **Errata (November 2026).** These v0 numbers are mostly a return-math error, not only
+> survivorship. The runner recorded the top decile's *5-day* forward return on *every* day,
+> compounded those overlapping returns daily and annualized with sqrt(252), so each day's return
+> was counted about five times. The returns were also *abnormal* (stock minus SPY) but were
+> compared with SPY's total return, no costs were charged, and the IC t-stat treated overlapping
+> daily ICs as independent. A rough correction from the committed numbers (not a re-run):
+> Sharpe ~2.08/sqrt(5) = 0.93 and IC t ~4.63/sqrt(5) = 2.07; the 8,689x total corresponds to
+> roughly 14.7%/yr of pre-cost abnormal return (ln(8,689.9)/13.27 years/5), against SPY's 14.5%/yr
+> total return. The verdict is INVALID; `run_e10_v0.py` now rebalances every 5 sessions, charges
+> 5bps/side, holds total returns, and uses a Newey-West t-stat. Re-run pending.
+
 Window 2013-07-03 -> 2026-10-09, BROAD-40, weekly-ish blocks (63 sessions), 5-day embargo.
 
 - Daily Spearman IC: **0.0162** (t = 4.63, 3150 scored days)
