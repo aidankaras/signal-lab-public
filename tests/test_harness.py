@@ -104,3 +104,15 @@ def test_trials_are_append_only(tmp_path):
     assert len(read_trials(p)) == 2
     assert [t["experiment"] for t in read_trials(p, "x")] == ["x"]
     assert read_trials(str(tmp_path / "missing.jsonl")) == []
+
+
+def test_fetch_cache_must_cover_request(tmp_path, monkeypatch):
+    import harness.data as hd
+    monkeypatch.setattr(hd, "CACHE", str(tmp_path))
+    idx = pd.to_datetime(["2005-01-03", "2005-01-04"])
+    pd.DataFrame({"SPY": [1.0, 1.01], "AAPL": [1.0, 1.02]}, index=idx).to_csv(tmp_path / "prices.csv")
+    assert list(hd.fetch(tickers=["SPY", "AAPL"], start="2005-01-01").columns) == ["SPY", "AAPL"]
+    assert hd.covers(pd.read_csv(tmp_path / "prices.csv", index_col=0, parse_dates=True), ["SPY"], "2005-01-01")
+    cached = pd.read_csv(tmp_path / "prices.csv", index_col=0, parse_dates=True)
+    assert not hd.covers(cached, hd.BROAD, "2005-01-01")      # missing tickers -> not reused
+    assert not hd.covers(cached, ["SPY"], "2000-01-01")       # starts too late -> not reused
