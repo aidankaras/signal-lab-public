@@ -1,6 +1,6 @@
 """python run_e8.py -- LSTM price model (e8). Offline-executed (needs torch CPU).
 
-Pre-registration: experiments/experiment-8-deep-learning.md. Small LSTM (~20k params)
+Pre-registration: experiments/e08-lstm/SPEC.md. Small LSTM (~20k params)
 on daily sequences; the data budget (40 tickers x ~14y daily) cannot support anything
 larger — stated up front rather than tuned around.
 
@@ -153,10 +153,7 @@ def run():
            "scored_days": n, "params": {"hidden": HID, "seq": SEQ, "layers": 2},
            "caveat": "BROAD-40 survivorship universe — any IC pass is suspect (see e10)",
            "verdict": "BEAT" if t > 2 else "LOSE"}
-    log_trial(os.path.join(ROOT, "registry", "trials.jsonl"),
-              {"experiment": "e8_lstm", "generation": 0, "stage": "holdout",
-               "params": {"hidden": HID, "seq": SEQ, "epochs": EPOCHS}, "seed": 0,
-               "ic": ic, "t": t, "n": n, "verdict": res["verdict"], "origin": "manual"})
+    os.makedirs(os.path.join(ROOT, "reports"), exist_ok=True)
     json.dump(res, open(os.path.join(ROOT, "reports", "e8-lstm.json"), "w"), indent=1)
     open(os.path.join(ROOT, "reports", "e8-lstm.md"), "w").write(
         "# e8 - LSTM price model " + time.strftime("%Y-%m-%d") + "\n\n"
@@ -164,7 +161,11 @@ def run():
         f"- Verdict: **{res['verdict']}** (gate: IC t > 2)\n"
         "- Model: 2-layer LSTM(32) on 20-session sequences, walk-forward refit yearly,\n"
         "  5-session embargo, early stopping on the fit window's own holdout.\n"
-        "- Caveat: survivorship-biased universe; see experiments/experiment-8-deep-learning.md\n")
+        "- Caveat: survivorship-biased universe (BROAD-40); see experiments/e08-lstm/SPEC.md\n")
+    log_trial(os.path.join(ROOT, "registry", "trials.jsonl"),
+              {"experiment": "e8_lstm", "generation": 0, "stage": "holdout",
+               "params": {"hidden": HID, "seq": SEQ, "epochs": EPOCHS}, "seed": 0,
+               "ic": ic, "t": t, "n": n, "verdict": res["verdict"], "origin": "manual"})
     print(json.dumps(res, indent=1))
 
 

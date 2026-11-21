@@ -1,6 +1,6 @@
 """python run_e6.py -- e6 SEC-filings baseline, rebuilt natively for the lab harness.
 
-Replaces the legacy pipeline (reference/sec-filings-legacy/, kept for provenance) with the
+Replaces the legacy pipeline (not in this repo; see aidankaras/sec-filings-e6) with the
 lab's own stack: no Docker, no Postgres, no subscription LLM runtime. Free EDGAR + yfinance
 + a dedicated venv only.
 
@@ -54,7 +54,7 @@ def get(url, binary=False, retries=3):
                 print("HTTP", e.code, url[:80], flush=True)
                 raise
             time.sleep(max(2 ** a, int(e.headers.get("Retry-After", 0)) + 1))
-        except Exception as e:
+        except Exception:
             if a == retries - 1:
                 raise
             time.sleep(2 ** a)
@@ -180,7 +180,6 @@ def labels_and_eval(panel):
     dates = sorted(df.date.unique())
     # embargo: an issuer-day's label closes 5 sessions later; block of 10 scored days,
     # fitted on all days ending >=5 sessions before the block starts.
-    date_pos = {d: i for i, d in enumerate(dates)}
     ics = []
     for b in range(3, len(dates) - 10, 10):  # first 3 dates reserved for the initial fit
         blk = dates[b:b + 10]
@@ -215,18 +214,19 @@ def main():
                 "universe": "BROAD-40 (smaller than legacy whole-EDGAR; flagged)",
                 "verdict": "BEAT" if (res["t"] > 2 and res["ic_mean"] > 0) else "LOSE",
                 "llm_arm": "not-run (needs pinned-model subscription runtime; out of lab scope)"})
+    os.makedirs(os.path.join(ROOT, "reports"), exist_ok=True)
+    json.dump(res, open(os.path.join(ROOT, "reports", "e6-baseline.json"), "w"), indent=1)
+    txt = ["# e6 SEC-filings baseline (native rebuild) " + time.strftime("%Y-%m-%d"), "",
+           f"Window {START}→{END}, BROAD-40 universe, Form-4 features, 5-session abnormal-return labels,",
+           "walk-forward logreg (10-day blocks, 5-day embargo).", "",
+           f"- Daily Spearman IC: **{res['ic_mean']}** (t = {res['t']}, {res['scored_days']} scored days, {res['issuer_days_total']} issuer-days, {res['n_events']} transactions)",
+           f"- Verdict: **{res['verdict']}** (gate: t > 2 and IC > 0). Legacy whole-EDGAR reference: IC +0.029 (t 1.52) = null.",
+           "- LLM arm: not-run (out of lab scope).", ""]
+    open(os.path.join(ROOT, "reports", "e6-baseline.md"), "w").write("\n".join(txt))
     log_trial(TR, {"experiment": "e6_sec_filings",
                    "generation": 0, "stage": "holdout", "params": {"v": 1, "model": "logreg"},
                    "seed": 0, "ic": res["ic_mean"], "t": res["t"], "n": res["scored_days"],
                    "verdict": res["verdict"], "origin": "manual"})
-    json.dump(res, open(os.path.join(ROOT, "reports", "e6-baseline.json"), "w"), indent=1)
-    txt = ["# e6 SEC-filings baseline (native rebuild) " + time.strftime("%Y-%m-%d"), "",
-           f"Window {START}→{END}, BROAD-40 universe, Form-4 features, 5-session abnormal-return labels,",
-           f"walk-forward logreg (10-day blocks, 5-day embargo).", "",
-           f"- Daily Spearman IC: **{res['ic_mean']}** (t = {res['t']}, {res['scored_days']} scored days, {res['issuer_days_total']} issuer-days, {res['n_events']} transactions)",
-           f"- Verdict: **{res['verdict']}** (gate: t > 2 and IC > 0). Legacy whole-EDGAR reference: IC +0.029 (t 1.52) = null.",
-           f"- LLM arm: not-run (out of lab scope).", ""]
-    open(os.path.join(ROOT, "reports", "e6-baseline.md"), "w").write("\n".join(txt))
     print(json.dumps(res, indent=1))
 
 
