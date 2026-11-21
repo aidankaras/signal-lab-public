@@ -1,6 +1,8 @@
 # E5 — thesis book (paper)
 
-**Verdict: PENDING** — seeded 2026-10-20; day-0 result is 0% everywhere by construction.
+**Verdict: none — discontinued when the repo was archived (November 2026).** The book was seeded
+2026-10-20; only the day-0 snapshot is committed (0% everywhere by construction), so the
+2-quarter demotion rule was never evaluated.
 
 Run: `python experiments/e05-thesis-book/run_e5.py` (add `--seed` only to re-initialise;
 it overwrites state). State is written to `registry/e5-portfolio.json`.

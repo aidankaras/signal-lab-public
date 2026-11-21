@@ -4,88 +4,111 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
 
-![Out-of-sample Sharpe vs SPY per experiment](docs/img/oos_sharpe_vs_spy.png)
+![Out-of-sample Sharpe vs SPY per experiment (invalid runs omitted)](docs/img/oos_sharpe_vs_spy.png)
 
 A walk-forward backtesting harness for evaluating trading strategies against the S&P 500
-under strict anti-overfitting controls. Every experiment is pre-registered, scored on the
-identical window against buy-and-hold and a random-entry control, and published with its
-verdict — failures included.
+with anti-overfitting controls: pre-registration, random-entry controls, same-window comparison
+against buy-and-hold, and an append-only trial log. Results are published with their verdict,
+failures included. The repository was archived in November 2026; the errata below were added at
+that point.
 
 ## Why
 
-Most published strategy results — especially those from retail "AI trading bot" posts —
-do not survive out-of-sample testing with realistic costs. This lab exists to run those
-claims through an honest evaluation pipeline and record what happens. Nineteen
-experiments are indexed below (e00–e22; e11 and e15 were never run, e21 was specified
-but not run): every concluded experiment loses out-of-sample after costs (to SPY for
-equity strategies, to random-entry and trend-following controls for FX). Five forward
-tests are still pending (see [In progress](#in-progress-forward-paper-only)). The
-negative results are the product: the harness, the controls, and the discipline of
-publishing verdicts that do not flatter the work.
+Most published strategy results, especially retail "AI trading bot" posts, do not survive
+out-of-sample testing with realistic costs. This lab ran such claims through one evaluation
+pipeline and recorded what happened. Twenty experiments are indexed below (e00–e22; e11, e15 and
+e21 were never run). No experiment produced a usable edge: the valid results lose to SPY (equity
+strategies) or to random-entry and trend-following controls (FX), and the few that pass a gate
+do so on a survivor-biased universe and are not promoted. Several published verdicts turned out
+to rest on bugs; they are listed in the errata and relabeled rather than removed.
+
+## Errata (November 2026)
+
+A line-by-line review of the runners found bugs under several published verdicts. Each one is
+fixed in code. Market data could not be downloaded when the fixes were made, so the affected
+experiments have **not** been re-run; their committed numbers are from the buggy code and are
+labeled INVALID or "pending re-run". Numbers below were recomputed from committed files where
+possible; anything marked "rough" is arithmetic on committed summary numbers, not a re-run.
+
+| Experiment | What was wrong | What changes | Does the conclusion hold? |
+|---|---|---|---|
+| e10 v0 | The top decile's 5-day forward return was recorded every day, compounded daily and annualized with sqrt(252), so each day counted about 5 times. Returns were abnormal (vs SPY) but compared with SPY's total return; pre-cost; IC t ignored the overlap. | v0 is INVALID. Rough correction: Sharpe ~2.08/sqrt(5) = 0.93, IC t ~2.07, the 8,689x total is about 14.7%/yr pre-cost abnormal return. The "8,689x / 87%/yr from survivorship" story is withdrawn. Runner fixed (5-session rebalances, costs, Newey-West t). | e10 v1 (point-in-time, LOSE) is not affected. Survivorship still flatters BROAD-40 results, but v0 does not measure by how much. Pending re-run. |
+| e04 | The README said "no factor passes both regime splits". The repo's own reports show reversal and trend PASS the strict gate on both splits (momentum on 2023+ only). | Relabeled SUSPECT, not promoted. | Still not an edge: survivor-biased BROAD-40, champion parameters differ between splits, and champions were promoted on the same holdout they are scored on. |
+| e09 | The output parser looked for "ANSWER:", which the prompt never contained; llama-cli echoes the prompt ("UP or DOWN"), so every call parsed as UP. | "Constant-UP predictor" withdrawn; e09 is INVALID. Parser fixed (prompt not echoed, grammar-constrained UP/DOWN). | Unknown. Pending re-run. |
+| e07 ORB | The short leg was simulated as a long; the stop check fired on the first bar and booked every short as a win. That is the +0.519%/trade and 68.6% win rate. e7c (fade) always shorted, even below VWAP. | ORB INVALID (it was labeled SUSPECT; the trial log says BEAT). Both fixed. | e7b (reclaim) LOSE is unaffected. ORB and fade pending re-run. |
+| e12 | The position was updated from today's z-score before today's spread change was booked, so entries booked their trigger move as a loss and exits dropped the reversion; a perfect +3 to 0 reversion scored about -6%. Also double-scaled P&L, ADF instead of Engle-Granger critical values, random pairs with hedge ratio 1, late listings dropped. | INVALID. "Real cointegrated pairs underperform random pairs" is withdrawn. Runner fixed. | Unknown. Pending re-run. |
+| e13 | `harness.data.fetch` returned the cached 8-ticker e0 panel instead of BROAD-40, so most picks earned 0%. Also: book only 50% invested, no switch to SPY when risk-off, same-bar look-ahead, ROA used as ROE, control never rebalanced. | INVALID. Cache check added to the harness; runner fixed. | Unknown. Pending re-run. |
+| e20 | 4H bars are labeled by their start; the scan began at the start of the break candle, so about 30% of trades (54% of the no-trigger ablation) entered before that candle closed. | Dropping those trades from the committed CSVs: primary holdout -0.12R (t -0.72, n 111) instead of -0.04R; every variant is lower. Runner fixed. | LOSE holds (the leak favored the strategy). The dev-period ablation and the 2003–14 / 2022+ follow-up ran on the leaky code and are tainted. |
+| e08 | IC t-stat treated overlapping 5-day labels as independent; early stopping held out the last ~10 tickers (rows were sorted by ticker), sharing dates with training. | Rough overlap correction puts t = -2.06 near -0.9. "Anti-predictive" withdrawn. Runner fixed. | LOSE (no skill) holds. |
+| e06 | Entry at the filing-date close (Form 4s are often filed after the close); 5-day embargo where 10 was pre-registered; t-stat ignored overlap. | Runner fixed. | LOSE very likely holds (IC 0.017, t 0.11 over 17 days). Pending re-run. |
+| e02 v0 | Filings were counted over a Monday–Sunday week, but entry used the close on or before that Monday (up to ~6 days early). | Runner fixed (entry at the next Monday's close). | v0 AUC 0.498 pending re-run. v1/v2 are not affected. |
+| e16a | 20 bps per round trip is far above SPY's real cost and produces the -1.6 to -3.5 net Sharpe. | Cost table added (1–20 bps). At 2 bps the variants are 0.06 to 0.42 net. | LOSE holds: nothing beats SPY buy-and-hold (0.86) even at 1 bp, and no model passes the AUC gate. |
+| Harness `evaluate()` | BEAT was `(1 + s - b).prod() > 1`, not a comparison of total returns; a +27.8% strategy lost to a +27.0% benchmark. | Fixed and unit-tested. In the committed JSON two intermediate entries would flip (e4 reversal gen 0; regime-check low-vol gen 1–2). | No final verdict changes. |
+| Fills | Docs said fills happen at the next bar's open. The harness fills at the signal bar's close (weights decided at close *t* earn close *t* to *t+1*). | Docs corrected. | Common practice; no verdict changes. |
+| Quickstart | Runners wrote to a missing `reports/` folder and crashed after appending to `registry/trials.jsonl`; `make_charts.py` needed matplotlib, which was not in `requirements.txt`. | Fixed: folders are created first, trials are logged after outputs; matplotlib added. | n/a |
+
+Re-run commands (need network and, for some, local data or a local model) are listed in each
+experiment's folder; the main ones are under [Quickstart](#quickstart-fresh-clone).
 
 ## Results
 
 | Experiment | Claim tested | Verdict |
 |---|---|---|
-| [e00](experiments/e00-ma-baseline/) | MA-crossover baseline (benchmark, not a claim) | informational |
-| [e01](experiments/e01-hmm-regime/) | HMM regime detection | LOSE |
-| [e02](experiments/e02-insider-filings/) | Insider Form-4 filing clusters predict returns | LOSE — AUC 0.498 vs 0.55 kill gate; e2 v2 (cluster events): **LOSE** — mean −1.53%, t −2.30, n=120, 2011–2017 window |
-| [e03](experiments/e03-kalshi-logger/) | Kalshi maker-spread paper logger | PENDING — see [In progress](#in-progress-forward-paper-only) |
-| [e04](experiments/e04-factor-tilts/) | Classic factor tilts (momentum, low-vol, reversal, trend) | LOSE — no factor passes both regime splits |
-| [e05](experiments/e05-thesis-book/) | Thesis-research 10-position paper book vs SPY, QTUM and random-pick control | PENDING — see [In progress](#in-progress-forward-paper-only) |
-| [e06](experiments/e06-sec-filings/) | SEC-filing features forecast 5-session abnormal returns | LOSE — IC 0.017, t 0.11 |
-| [e07](experiments/e07-daytrading-setups/) | Claimed day-trading setups (ORB, VWAP reclaim/fade, gap-and-go) | reclaim/fade LOSE at random-entry control; ORB SUSPECT |
-| [e08](experiments/e08-lstm/) | LSTM on daily price sequences | LOSE — IC −0.0082 (anti-predictive) |
-| [e09](experiments/e09-local-llm/) | Local 1.5B LLM analyst (zero-shot, llama.cpp) | LOSE — constant-UP predictor, accuracy = base rate |
+| [e00](experiments/e00-ma-baseline/) | MA-crossover baseline (benchmark, not a claim) | informational (trails SPY on total return) |
+| [e01](experiments/e01-hmm-regime/) | Volatility-regime filter (Gaussian mixture; filed as "HMM") | LOSE |
+| [e02](experiments/e02-insider-filings/) | Insider Form-4 filing clusters predict returns | v0: LOSE, AUC 0.498 vs 0.55 kill gate (pending re-run, see errata); v2 cluster events: **LOSE** — mean −1.53%, t −2.30, n=120, 2011–2017 |
+| [e03](experiments/e03-kalshi-logger/) | Kalshi maker-spread paper logger | discontinued at archive (2 days of quotes, no verdict) |
+| [e04](experiments/e04-factor-tilts/) | Classic factor tilts (momentum, low-vol, reversal, trend) | SUSPECT, not promoted — reversal and trend pass the strict gate on both splits, on a survivor-biased universe with holdout-selected champions |
+| [e05](experiments/e05-thesis-book/) | Thesis-research 10-position paper book vs SPY, QTUM and random-pick control | discontinued at archive (seeded 2026-10-20, only the day-0 snapshot exists) |
+| [e06](experiments/e06-sec-filings/) | SEC-filing features forecast 5-session abnormal returns | LOSE — IC 0.017, t 0.11, 17 scored days (runner fixed, see errata) |
+| [e07](experiments/e07-daytrading-setups/) | Claimed day-trading setups (ORB, VWAP reclaim/fade, gap-and-go) | reclaim LOSE (matches the random-entry control); ORB INVALID; fade pending re-run; gap-and-go 3 trades, untestable |
+| [e08](experiments/e08-lstm/) | LSTM on daily price sequences | LOSE — no skill (IC −0.0082; overlap-corrected t about −0.9) |
+| [e09](experiments/e09-local-llm/) | Local 1.5B LLM analyst (zero-shot, llama.cpp) | INVALID — output-parser bug; pending re-run |
 | [e10 v1](experiments/e10-gbm-ranker/) | Same GBM on point-in-time S&P 500 membership, 10bps/side | **LOSE** — net Sharpe 0.54 vs SPY 0.97, CAGR 10.5% vs 15.4%; beats random-pick p95 (0.42) only; IC t 1.98 |
-| [e10 v0](experiments/e10-gbm-ranker/) | GBM cross-sectional ranker (momentum + price features) | gate passed, SUSPECT — survivorship-biased universe; not promoted |
-| [e12](experiments/e12-pairs-cointegration/) | Pairs trading via cointegration (780-pair scan) | LOSE — real pairs underperform a random-pairs control |
-| [e13](experiments/e13-cio-framework/) | "CIO framework" LLM prompt, decomposed | LOSE — Sharpe 0.54 vs SPY 0.64 |
+| [e10 v0](experiments/e10-gbm-ranker/) | GBM cross-sectional ranker on BROAD-40 (today's large caps) | INVALID — overlapping returns compounded daily, pre-cost; pending re-run |
+| [e12](experiments/e12-pairs-cointegration/) | Pairs trading via cointegration | INVALID — P&L booked on the signal bar in the wrong direction; pending re-run |
+| [e13](experiments/e13-cio-framework/) | "CIO framework" LLM prompt, decomposed | INVALID — ran on the wrong price data; pending re-run |
 | [e14](experiments/e14-thirdparty-etf-rules/) | Shared bot: 5 rules (trend, vol-trend, breakout, dip, 12m momentum) on 7 ETFs/crypto | LOSE — 0/5 pass own gate (v0 and v1 with the shared params); none beats SPY |
-| [e16a](experiments/e16-daily-direction/) | Daily SPY open->close direction: logit + HGB walk-forward, 20 bps/round trip, TP/SL overlays | **LOSE** — 0/4 variants pass; AUC 0.495 (logit) / 0.520 (HGB); net Sharpe −1.6 to −3.5 vs SPY B&H 0.86; always-long intraday gross 0.43 |
-| [e16b/e17](forward/SPEC-e16b-e17.md) | Live forward arms of e16/e17 on paper accounts | PENDING — see [In progress](#in-progress-forward-paper-only) |
-| [e18](experiments/e18-newtoken-logger/) | New crypto token listing logger + scorer | PENDING — see [In progress](#in-progress-forward-paper-only) |
+| [e16a](experiments/e16-daily-direction/) | Daily SPY open->close direction: logit + HGB walk-forward, TP/SL overlays | **LOSE** — 0/4 variants pass; AUC 0.495 (logit) / 0.520 (HGB); net Sharpe 0.06–0.42 at 2 bps, −1.6 to −3.5 at the pre-registered 20 bps, vs SPY B&H 0.86 |
+| [e16b/e17](forward/SPEC-e16b-e17.md) | Live forward arms of e16/e17 on paper accounts | discontinued at archive (no scored calls committed) |
+| [e18](experiments/e18-newtoken-logger/) | New crypto token listing logger + scorer | discontinued at archive (1 day of data, gate needs ≥200 approved tokens) |
 | [e19](experiments/e19-foundation-forecast/) | Zero-shot Kronos / TimesFM forecasts on 14 ETFs | **LOSE** — 0/12 trials BEAT (Bonferroni alpha 0.0042) |
-| [e20](experiments/e20-fx-break-retest/) | Retail FX "break → retest → engulfing" setup, 10 pairs, 2015–2026 | **LOSE** — holdout (2022+) mean −0.04R/trade, t −0.29, n=152; 0/6 variants reach t≥2. Follow-up: the best dev-period ablation failed two further pre-registered OOS tests (2003–14: gate fail; 2022+: +0.11R, t 1.01); FX lane closed |
+| [e20](experiments/e20-fx-break-retest/) | Retail FX "break → retest → engulfing" setup, 10 pairs, 2015–2026 | **LOSE** — holdout (2022+) mean −0.04R/trade, t −0.29, n=152 (−0.12R without the look-ahead trades); 0/6 variants reach t≥2. The follow-up on the best dev ablation also failed but ran on the leaky code; FX lane closed |
 | [e22](experiments/e22-tsmom/) | Cross-asset vol-targeted 12-1 time-series momentum, 8 ETFs, 2015+ holdout | **LOSE** — best holdout Sharpe 0.52 (long-only) vs SPY 0.80; long/short variants ≈ 0 |
 
-Verdict labels: **BEAT** (passes every pre-registered gate), **LOSE** (fails at least one), **PENDING** (forward test, not yet scoreable), *informational* (benchmark, no claim), SUSPECT (passes a gate but the universe/sample is not trustworthy, so not promoted).
+Verdict labels: **BEAT** (passes every pre-registered gate), **LOSE** (fails at least one),
+*informational* (benchmark, no claim), SUSPECT (passes a gate but the universe/sample is not
+trustworthy, so not promoted), INVALID (the run had a bug that decides the result; fixed in code,
+not yet re-run), discontinued (forward test stopped at archive, no verdict).
+Verdicts use total return and controls; Sharpe alone does not decide them, which is why some
+LOSE rows in the chart above show a Sharpe higher than SPY's.
 
-### In progress (forward, paper-only)
-
-No real money is used. Verdicts are scored on public prices by pre-registered gates, and are published either way.
-
-| Experiment | What | Earliest verdict |
-|---|---|---|
-| [e16b / e17](forward/SPEC-e16b-e17.md) | Daily SPY long/flat call (e16b) and single-ETF pick (e17) recorded before the open | ≥60 scored days, ~mid-Jan 2027 |
-| [e03](experiments/e03-kalshi-logger/) | Kalshi maker-spread paper quotes | 4-week paper clock ends ~2026-11-15 (a consistency check, not a profit claim) |
-| [e18](experiments/e18-newtoken-logger/) | New-token risk filter vs random new tokens | ≥6 weeks logging and ≥200 approved tokens, no earlier than 2026-12-11 |
-| [e05](experiments/e05-thesis-book/) | 10-position thesis book vs SPY, thematic ETF and random-pick control | seeded 2026-10-20; demotion rule evaluated after 2 quarters (~Apr 2027) |
-
-Each experiment folder is self-contained — runner code, report, and `SPEC.md`
-(the pre-registration written before the run).
-
-Two documented artifacts worth reading the code for: e10 shows how a naive GBM
-replication prints ~87%/yr when the universe is today's mega-caps (survivorship), and
-e7's first run scored every short exit as a fake win because the simulator was
-long-only — both are flagged in the reports rather than hidden.
+Each experiment folder holds its runner code and report, and a `SPEC*.md` pre-registration where
+one exists (e0, e1, e2 v0, e3 and e4 have none; see each folder's README).
 
 ## Key findings
 
-- **Survivorship bias manufactures edge.** The same GBM ranker prints Sharpe 2.08 and an 8,689x
-  total return on today's mega-caps (e10 v0, verdict BEAT). On point-in-time S&P 500 membership
-  it is net Sharpe 0.54 vs SPY 0.97 and **LOSE** (e10 v1).
-- **Costs and turnover eat gross edge.** e10 v1 gross Sharpe 0.80 falls to 0.54 net at 10 bps/side
-  (0.63 turnover per rebalance). Daily-direction models on SPY (e16a)
-  show the extreme case: 20 bps round trip turns a gross 0.43 into net Sharpe −1.6 to −3.5.
-- **Random controls matter.** On a survivor-biased universe 16 of 20 random 3-stock picks beat
-  SPY, so beating SPY is not evidence; verdicts require beating the random-pick median and
-  equal-weight universe too. e12's real cointegrated pairs underperform random pairs.
-- **Trend momentum faded.** Classic vol-targeted 12-1 time-series momentum has dev Sharpe 0.60 (t 2.59) but ≈0 after 2014; best holdout Sharpe 0.52 vs SPY 0.80 (e22).
-- **Negative results are the output.** LSTM IC is anti-predictive (−0.0082), the local LLM is a
-  constant-UP predictor, insider clusters score AUC 0.498 vs a 0.55 gate.
+These are the conclusions that survive the errata.
 
-![e10 survivorship and costs](docs/img/e10_survivorship_costs.png)
+- **Survivorship and costs.** On point-in-time S&P 500 membership the GBM ranker is net Sharpe
+  0.54 vs SPY 0.97 and **LOSE** (e10 v1); gross Sharpe 0.80 falls to 0.54 net at 10 bps/side
+  (0.63 turnover per rebalance). The earlier "8,689x on today's mega-caps" figure was mostly a
+  return-math error and is withdrawn.
+- **Random controls matter.** On a survivor-biased universe most random 3-stock picks beat SPY
+  (16 of 20 seeds in the e0 report), so beating SPY is not evidence; the strict verdict also
+  requires beating the random-pick median and the equal-weight universe. The e4 factor tilts
+  that do pass that bar are still SUSPECT for the reasons in the errata.
+- **Costs decide daily strategies.** e16a's daily SPY direction models have no skill (AUC 0.495 /
+  0.520). Whether they lose a little or a lot depends on the cost assumption; they lose at every
+  cost level tested.
+- **Trend momentum faded.** Classic vol-targeted 12-1 time-series momentum has dev Sharpe 0.60
+  (t 2.59) but ≈0 after 2014; best holdout Sharpe 0.52 vs SPY 0.80 (e22).
+- **Bugs hide in the plumbing, not the model.** Five published verdicts were decided by P&L,
+  timing, data-loading or parsing bugs (e07 ORB, e09, e10 v0, e12, e13), and e20's development
+  numbers were inflated by look-ahead inside a bar. Most of these runners did their own
+  simulation instead of using the unit-tested harness code.
+
+![e10 v1 gross vs net vs SPY](docs/img/e10_survivorship_costs.png)
 
 ## Limitations
 
@@ -93,28 +116,38 @@ long-only — both are flagged in the reports rather than hidden.
   e10 v1 covers 68%–99% of historical members depending on date (lowest early; delisted names are missing).
 - Most universes are small (BROAD-40, 7 ETFs); single-stock results are flagged SUSPECT.
 - Intraday tests (e07) cover ~60 days of 5-minute data; e06 has 17 scored days. Low power.
-- Costs are flat bps assumptions, no market impact or borrow costs; fills at next-bar open.
-- SPY is the S&P 500 proxy. Holdouts are re-used once per generation, so they degrade;
-  generations are capped but not zero-cost.
+- Costs are flat bps assumptions, no market impact or borrow costs. Daily backtests fill at the
+  signal bar's close (market-on-close), not the next open.
+- SPY is the S&P 500 proxy. Holdouts are reused for champion promotion once per generation, so
+  they degrade; generations are capped but not zero-cost.
 - Seeds, universes and windows differ across experiments: compare verdicts, not raw numbers.
-- No live-trading evidence; e03 and e05 are paper clocks that have not matured.
+- Several runners were never re-run after the November 2026 fixes (see errata).
+- No live-trading evidence; the paper clocks (e03, e05, e16b/e17, e18) were stopped at archive.
 
 ## Design
 
-- **No lookahead.** Signals are computed from data available at decision time; fills at
-  the next bar's open; labels embargoed across walk-forward blocks. Stop/target checks
-  are conservative within each bar.
-- **Costs in every test.** 5 bps per side plus slippage, charged in a causal simulator.
-- **Controls on every claim.** Random-entry (same rule, random timing) and random-pair
-  (same rule, random selection) controls run alongside every strategy.
-- **Overfit accounting.** `registry/trials.jsonl` is append-only and records every trial;
-  Deflated Sharpe/PBO are computed over the full count, so retrying an idea until it
-  looks good cannot fake an edge.
-- **Same-window comparison.** Every verdict is strategy vs SPY vs control over
-  identical dates.
-- **Pre-registration.** Grids, gates and kill criteria are written into each experiment's
-  `SPEC.md` and `registry/experiments.yaml` before any run; the registry shows kill
-  criteria being honored (e2, e8, e9, e12 lanes closed after first losing generation).
+What is implemented, and where it falls short.
+
+- **Causality.** Signals use data available at decision time. In `harness/experiment.py` a weight
+  decided at close *t* earns the close *t* to *t+1* return (a fill at the signal bar's close).
+  Runners that simulate trades themselves handle timing on their own; three got it wrong (e12, e13,
+  e20; fixed). Intraday stop/target checks assume the stop is hit first when both are touched in
+  one bar.
+- **Costs in most tests.** Per-side cost on turnover (5 bps default, 10 bps for e10 v1, 20 bps
+  round trip for e16a). IC-only experiments (e2 v0, e6, e8, e9) and the e10 v0 run charge none.
+- **Controls where they could be built.** Random-pick / random-entry / random-sign controls for e0,
+  e1, e2 v1/v2, e4, e5, e7, e10 v1, e14, e16a, e19, e20 and e22; random pairs for e12. e6, e8, e9 and e10 v0 have no control.
+- **Overfit accounting.** `registry/trials.jsonl` is append-only, but incomplete (e2 v0, e3 and
+  e18 not logged; e20 follow-up kept privately; some re-runs logged more than once; one block out
+  of chronological order). Deflated Sharpe is computed for e0, e1 and e4 over their logged trials.
+  PBO is not implemented. Champions are picked on full development-period Sharpe and promoted on
+  the holdout, so the holdout is not untouched.
+- **Same-window comparison.** Every verdict compares strategy, SPY and (where present) the control
+  over identical dates.
+- **Pre-registration.** Most experiments have a `SPEC*.md` written before the run.
+  `registry/experiments.yaml` covers only e0–e5 and its grids differ from what ran (noted in the
+  file). Kill criteria were mostly honored (e8, e9, e12, e20 lanes closed), but e2 was reopened
+  twice after its kill gate, and the e9 and e12 closures rested on the buggy runs.
 
 ## Stack
 
@@ -140,24 +173,44 @@ git clone https://github.com/aidankaras/signal-lab-public.git && cd signal-lab-p
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python -m pytest -q                       # unit tests, synthetic data, no network
-python docs/make_charts.py /tmp/charts    # regenerates the e10 v0->v1 chart from the committed JSON
+python docs/make_charts.py /tmp/charts    # regenerates both charts from the committed JSON
 ```
 
 Reproduce one result from raw data (needs network; downloads prices via yfinance):
 
 ```bash
 python experiments/e22-tsmom/run_e22.py data out        # fast (~2 min), prices via yfinance; compare out/results.json with experiments/e22-tsmom/results/
-python experiments/e12-pairs-cointegration/run_e12.py   # pairs walk-forward, compare with e12-pairs.md
+python experiments/e12-pairs-cointegration/run_e12.py   # corrected pairs walk-forward (the committed e12-pairs.md is INVALID)
 python -m tests.smoke                                   # e0/e1/control causality + verdict on real data
+```
+
+Pending re-runs from the errata (need network; outputs go to `reports/`, trials to
+`registry/trials.jsonl`):
+
+```bash
+python experiments/e13-cio-framework/run_e13.py         # needs a real SEC contact in its User-Agent
+python experiments/e10-gbm-ranker/run_e10_v0.py
+python experiments/e07-daytrading-setups/run_e7.py      # yfinance keeps only ~60 days of 5-minute bars
+python experiments/e08-lstm/run_e8.py                   # needs torch
+python experiments/e06-sec-filings/run_e6.py
+python experiments/e02-insider-filings/run_e2_edgar.py
+python experiments/e01-hmm-regime/run_e4_regime.py && python experiments/e04-factor-tilts/run_e4.py   # fixed BEAT formula
+# e09: build llama.cpp, download a Qwen2.5-1.5B-Instruct GGUF, then
+python experiments/e09-local-llm/run_e9_phase1.py
+LLAMA_CLI=/path/to/llama-cli E9_MODEL=/path/to/model.gguf \
+  python experiments/e09-local-llm/e9_infer.py data/cache/e9_summaries.jsonl data/cache/e9_predictions.jsonl
+python experiments/e09-local-llm/run_e9_score.py
+# e20: python experiments/e20-fx-break-retest/fetch_dukascopy.py && python experiments/e20-fx-break-retest/run_e20.py results
 ```
 
 ## Method in one paragraph
 
-Each experiment starts with a `SPEC.md` committed before any run: hypothesis, data, exact rules,
-variant count, gates and kill criteria. Development data may be inspected; the holdout is scored
-once. Costs are charged in every test; the strategy is compared to buy-and-hold and to a random
-control on identical dates; every trial, winners and losers, is appended to the trial registry so
-the number of tries is on record. Results from third-party "AI trading" claims are expected to
+Each experiment should start with a `SPEC.md` written before any run: hypothesis, data, exact
+rules, variant count, gates and kill criteria. Development data may be inspected; the holdout is
+meant to be scored once (the self-improvement loop in `harness/improve.py` reuses it for
+promotion). Costs are charged in most tests; the strategy is compared to buy-and-hold and, where
+one exists, to a random control on identical dates; trials are appended to the trial registry so
+the number of tries is on record (with the gaps listed under Design). Results from third-party "AI trading" claims are expected to
 fail this bar, and nearly all do, which is the finding. Data and universe caveats are stated in
 each report (see Limitations).
 
@@ -173,8 +226,7 @@ subscriptions, copy-trading of public officials' filings.
 ## Related work
 
 - [tonbistudio/model-trader](https://github.com/tonbistudio/model-trader) — model-based
-  trading framework; shares the harness-first mindset but does not publish out-of-sample
-  verdicts or a random-control baseline, which is this lab's main addition.
+  trading framework with a similar harness-first approach.
 - [aidankaras/sec-filings-e6](https://github.com/aidankaras/sec-filings-e6) — companion
   repo for the SEC-filing data pipeline behind [e06](experiments/e06-sec-filings/).
 

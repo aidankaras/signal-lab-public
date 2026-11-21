@@ -16,3 +16,7 @@ Otherwise LOSE; lane closed, no re-tuning on the same data. Missed days are skip
 
 ## Caps
 Paper only. No real money without gates cleared AND the owner's explicit approval.
+
+## Status (November 2026)
+Discontinued when the repo was archived. No scored calls are committed (the call log is not
+in the repo), so there is no verdict.

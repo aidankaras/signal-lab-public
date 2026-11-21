@@ -1,6 +1,6 @@
 # Roadmap
 
-Planned, not built.
+Planned, not built. The repository was archived in November 2026, so none of this is scheduled.
 
 ## Interactive dashboard (GitHub Pages)
 Static site generated from the report JSONs under `experiments/*/`:

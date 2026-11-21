@@ -28,5 +28,5 @@ learn coarse structure. A transformer or anything larger is not pre-registered â
 would fit noise and the honest result would be unfalsifiable from the fit itself.
 
 ## Status
-Not run. Needs torch (sklearn-only today); one `pip install` away, gated
-on e7 completion to keep the trials registry honest about how many ideas are burning.
+Run 2026-10-19 (`run_e8.py`, results in `e8-lstm.md`). See the errata in `README.md`:
+the early-stopping split and the t-stat were corrected in November 2026; re-run pending.

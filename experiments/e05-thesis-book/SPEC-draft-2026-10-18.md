@@ -1,4 +1,7 @@
-# e5 — Thesis-research buy-and-hold book (the paper portfolio)
+# e5 — Thesis-research buy-and-hold book (the paper portfolio) — EARLIER DRAFT
+
+> This is the first, longer e5 draft (2026-10-18). It used to sit in `experiments/e00-ma-baseline/SPEC.md`
+> by mistake. The rules actually implemented in `run_e5.py` are those in `SPEC.md` in this folder.
 
 Pre-registered 2026-10-18. Spec is binding: changes require a dated addendum below and
 owner sign-off. Paper only — never a real order.
