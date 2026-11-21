@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from harness.evaluator import evaluate, log_trial, metrics, read_trials  # noqa: E402
+from harness.evaluator import evaluate, log_trial, metrics, newey_west_t, read_trials  # noqa: E402
 from harness.experiment import simulate  # noqa: E402
 from harness.verdict import strict  # noqa: E402
 
@@ -116,3 +116,13 @@ def test_fetch_cache_must_cover_request(tmp_path, monkeypatch):
     cached = pd.read_csv(tmp_path / "prices.csv", index_col=0, parse_dates=True)
     assert not hd.covers(cached, hd.BROAD, "2005-01-01")      # missing tickers -> not reused
     assert not hd.covers(cached, ["SPY"], "2000-01-01")       # starts too late -> not reused
+
+
+def test_newey_west_t_deflates_overlapping_series():
+    rng = np.random.default_rng(0)
+    d = rng.normal(0.0, 1.0, 5005)
+    iid = d[:5000] + 0.03
+    over = pd.Series(d).rolling(5).sum().dropna().values[:5000] / 5 + 0.03   # 5-day overlapping average
+    naive = over.mean() / over.std(ddof=1) * math.sqrt(len(over))
+    assert math.isclose(newey_west_t(iid, 0), iid.mean() / iid.std(ddof=0) * math.sqrt(len(iid)), rel_tol=1e-9)
+    assert abs(newey_west_t(over, 4)) < abs(naive) * 0.6   # overlap inflates the naive t by ~sqrt(5)

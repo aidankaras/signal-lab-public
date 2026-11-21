@@ -47,6 +47,21 @@ def evaluate(strat: pd.Series, bench: pd.Series) -> dict:
             "window": [str(df.index[0].date()), str(df.index[-1].date())]}
 
 
+def newey_west_t(x, lags: int) -> float:
+    """t-stat of the mean of x with a Newey-West (Bartlett kernel) long-run variance.
+    Use for daily series built from overlapping h-day labels (lags = h - 1)."""
+    x = np.asarray(x, dtype=float)
+    x = x[~np.isnan(x)]
+    n = len(x)
+    if n < 2:
+        return 0.0
+    e = x - x.mean()
+    lrv = float(e @ e) / n
+    for k in range(1, min(lags, n - 1) + 1):
+        lrv += 2 * (1 - k / (lags + 1)) * float(e[k:] @ e[:-k]) / n
+    return float(x.mean() / math.sqrt(lrv / n)) if lrv > 0 else 0.0
+
+
 def deflated_sharpe(sr_daily: float, n_obs: int, trial_srs_daily, skew=0.0, kurt=3.0) -> float:
     """Bailey & Lopez de Prado DSR: prob. true Sharpe > 0 after N trials. Simple version."""
     N = max(len(trial_srs_daily), 1)
