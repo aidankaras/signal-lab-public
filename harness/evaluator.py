@@ -22,7 +22,7 @@ def metrics(x: pd.Series) -> dict:
     tot = float((1 + x).prod())
     cagr = tot ** (252 / n) - 1 if tot > 0 else -1.0
     sd = float(x.std(ddof=1))
-    down = x[x < 0].std(ddof=1)
+    down = math.sqrt(float((np.minimum(x, 0.0) ** 2).mean()))  # downside deviation (target 0)
     eq = (1 + x).cumprod()
     return {"cagr": _r(cagr), "sharpe": _r(x.mean() / sd * math.sqrt(252) if sd > 0 else 0.0),
             "sortino": _r(x.mean() / down * math.sqrt(252) if down and down > 0 else 0.0),

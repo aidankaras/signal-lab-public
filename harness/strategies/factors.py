@@ -18,6 +18,12 @@ def _month_ends(idx):
     return [i for i in range(len(idx) - 1) if p[i] != p[i + 1]]
 
 
+# Panels wider than this are treated as single-stock cross-sections (BROAD-40) and SPY is removed
+# from the tradable set, since it is the benchmark. Narrower panels (the 8-ticker e0 universe,
+# small ETF sets) keep SPY as a tradable asset.
+MAX_COLS_KEEP_SPY = 12
+
+
 class _Factor(Experiment):
     factor = ""
     grid = {"lookback": [6, 12], "top_n": [5, 8]}
@@ -26,7 +32,7 @@ class _Factor(Experiment):
         raise NotImplementedError
 
     def run(self, close, params, cost_bps=5.0):
-        c = close.drop(columns=["SPY"], errors="ignore") if close.shape[1] > 12 else close
+        c = close.drop(columns=["SPY"], errors="ignore") if close.shape[1] > MAX_COLS_KEEP_SPY else close
         sig = pd.DataFrame(0.0, index=c.index, columns=c.columns)
         ends = _month_ends(c.index)
         for k, i in enumerate(ends):

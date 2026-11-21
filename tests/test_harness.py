@@ -126,3 +126,9 @@ def test_newey_west_t_deflates_overlapping_series():
     naive = over.mean() / over.std(ddof=1) * math.sqrt(len(over))
     assert math.isclose(newey_west_t(iid, 0), iid.mean() / iid.std(ddof=0) * math.sqrt(len(iid)), rel_tol=1e-9)
     assert abs(newey_west_t(over, 4)) < abs(naive) * 0.6   # overlap inflates the naive t by ~sqrt(5)
+
+
+def test_sortino_uses_downside_deviation():
+    x = pd.Series([0.02, -0.01, 0.01, -0.03] * 10)
+    dd = math.sqrt((np.minimum(x, 0) ** 2).mean())
+    assert math.isclose(metrics(x)["sortino"], round(x.mean() / dd * math.sqrt(252), 4), abs_tol=1e-4)
