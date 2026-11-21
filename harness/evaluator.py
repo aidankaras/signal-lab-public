@@ -38,7 +38,9 @@ def evaluate(strat: pd.Series, bench: pd.Series) -> dict:
     if "error" in s:
         return s
     ex = df.s - df.b
-    beat = bool((1 + ex).prod() > 1)
+    # Compare compounded total returns. (1 + s - b).prod() > 1 is not equivalent and can
+    # call a strategy that out-returns the benchmark a LOSE when the benchmark is volatile.
+    beat = bool((1 + df.s).prod() > (1 + df.b).prod())
     return {"strategy": s, "benchmark_sp500": b, "alpha_annualized": _r(ex.mean() * 252),
             "tracking_diff_total": _r(s["total_return"] - b["total_return"]),
             "beat_sp500": beat, "verdict": "BEAT" if beat else "LOSE",

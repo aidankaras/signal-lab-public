@@ -66,6 +66,18 @@ def test_evaluate_beat_and_lose():
     assert evaluate(pd.Series(0.0, index=idx), bench)["verdict"] == "LOSE"
 
 
+def test_evaluate_beat_compares_total_returns():
+    # Volatile benchmark: prod(1 + s - b) < 1 even though the strategy's total return is higher.
+    idx = pd.bdate_range("2020-01-01", periods=60)
+    bench = pd.Series(np.tile([0.05, -0.04], 30), index=idx)
+    strat = pd.Series(0.0041, index=idx)  # total +27.8% vs bench +27.0%
+    ev = evaluate(strat, bench)
+    assert ev["strategy"]["total_return"] > ev["benchmark_sp500"]["total_return"]
+    assert ev["verdict"] == "BEAT"
+    # and the mirror case still loses
+    assert evaluate(pd.Series(0.0035, index=idx), bench)["verdict"] == "LOSE"
+
+
 def _ev(beat, sharpe, cagr):
     return {"beat_sp500": beat, "strategy": {"sharpe": sharpe, "cagr": cagr}}
 
