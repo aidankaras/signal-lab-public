@@ -24,7 +24,7 @@ import torch.nn as nn
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
 from harness.data import BROAD
-from harness.evaluator import log_trial
+from harness.evaluator import log_trial, newey_west_t
 
 SEQ, HID, EPOCHS, BATCH = 20, 32, 12, 4096
 
@@ -106,12 +106,20 @@ def run():
     for b in range(SEQ, len(dates) - step, step):
         fit_dates = dates[SEQ:dpos[dates[b - 6]]]      # 5-session embargo
         te_dates = dates[b:min(b + step, len(dates))]
-        Xtr, ytr, _ = collect(series, tickers, set(fit_dates), dpos)
+        Xtr, ytr, mtr = collect(series, tickers, set(fit_dates), dpos)
         Xte, _, meta = collect(series, tickers, set(te_dates), dpos)
         if len(Xtr) < 3000 or len(Xte) < 500:
             continue
-        # early-stop holdout: last year of the fit window
-        cut = int(len(Xtr) * 0.75)
+        # early-stop holdout: the last 252 sessions of the fit window, split by DATE with a
+        # 5-session gap. (The first version took the last 25% of rows, but rows are ordered by
+        # ticker, so that was the last ~10 tickers over all dates and shared dates with training.)
+        fd = np.array([dpos[d] for _, d in mtr])
+        order = np.argsort(fd, kind="stable")
+        Xtr, ytr, fd = Xtr[order], ytr[order], fd[order]
+        es_start = fd.max() - 251
+        tr_mask, es_mask = fd < es_start - 5, fd >= es_start
+        Xtr = np.concatenate([Xtr[tr_mask], Xtr[es_mask]]); ytr = np.concatenate([ytr[tr_mask], ytr[es_mask]])
+        cut = int(tr_mask.sum())
         net = Net()
         opt = torch.optim.Adam(net.parameters(), lr=1e-3, weight_decay=1e-4)
         lossf = nn.BCEWithLogitsLoss()
@@ -148,8 +156,8 @@ def run():
               (str(te_dates[-1])[:10], float(np.mean([v for _, v in ics])), len(ics)), flush=True)
     s = pd.Series({d: v for d, v in ics}).sort_index()
     ic, n = float(s.mean()), len(s)
-    t = float(ic / s.std() * n ** .5) if n > 1 and s.std() > 0 else 0.0
-    res = {"experiment": "e8_lstm", "ic_mean": round(ic, 4), "ic_t": round(t, 2),
+    t = newey_west_t(s.values, lags=4)   # 5-day labels overlap across consecutive days
+    res = {"experiment": "e8_lstm", "ic_mean": round(ic, 4), "ic_t_nw": round(t, 2),
            "scored_days": n, "params": {"hidden": HID, "seq": SEQ, "layers": 2},
            "caveat": "BROAD-40 survivorship universe — any IC pass is suspect (see e10)",
            "verdict": "BEAT" if t > 2 else "LOSE"}
@@ -157,7 +165,7 @@ def run():
     json.dump(res, open(os.path.join(ROOT, "reports", "e8-lstm.json"), "w"), indent=1)
     open(os.path.join(ROOT, "reports", "e8-lstm.md"), "w").write(
         "# e8 - LSTM price model " + time.strftime("%Y-%m-%d") + "\n\n"
-        f"- Daily Spearman IC: **{res['ic_mean']}** (t = {res['ic_t']}, {n} scored days)\n"
+        f"- Daily Spearman IC: **{res['ic_mean']}** (Newey-West t = {res['ic_t_nw']}, {n} scored days)\n"
         f"- Verdict: **{res['verdict']}** (gate: IC t > 2)\n"
         "- Model: 2-layer LSTM(32) on 20-session sequences, walk-forward refit yearly,\n"
         "  5-session embargo, early stopping on the fit window's own holdout.\n"
