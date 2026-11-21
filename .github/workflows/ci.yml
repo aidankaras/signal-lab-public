@@ -18,4 +18,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: pip install pandas numpy scipy scikit-learn pyyaml pytest ruff
       - run: ruff check harness tests
+      # experiments/ and forward/ are excluded from the style config, but must at least be
+      # free of undefined names and unused code (pyflakes rules), and must compile
+      - run: ruff check --isolated --select F --ignore F403,F405 experiments forward docs
+      - run: python -m compileall -q experiments forward docs harness
       - run: python -m pytest -q   # synthetic data only; no network
