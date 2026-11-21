@@ -1,4 +1,4 @@
-"""e3 Kalshi weather paper logger — stdlib only (runs on the VPS, no pandas).
+"""e3 Kalshi weather paper logger — stdlib only (runs as a scheduled job, no pandas).
 
 Logs daily mid/bid/ask for live Kalshi weather markets to registry/e3-paper.jsonl.
 PAPER ONLY: never places an order. The pre-registered live probe ($100 bankroll, maker-only,

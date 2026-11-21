@@ -3,7 +3,7 @@ Downloads monthly BID_candles_hour_1.bi5 via curl (urllib gets reset), parses
 24-byte records (t_offset_sec, open, close, low, high, volume), writes one CSV
 per pair under $E20_HOME/data/ (default: this folder). UTC timestamps.
 """
-import lzma, struct, subprocess, sys, os, time
+import lzma, struct, subprocess, os, time
 import pandas as pd
 
 PAIRS = ["EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD", "AUDUSD",

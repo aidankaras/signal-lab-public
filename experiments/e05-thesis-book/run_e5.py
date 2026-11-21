@@ -1,11 +1,11 @@
 """python experiments/e05-thesis-book/run_e5.py [--seed]  -- e5 thesis book (paper only).
 
-Spec: experiments/experiment-5-thesis-research.md (+ SPEC.md here). Marks the 10-position
+Spec: experiments/e05-thesis-book/SPEC.md. Marks the 10-position
 paper book to market vs ^GSPC (SPY), QTUM, and a random-pick control drawn from the SAME
 pre-registered candidate pool. Applies the demote rule. NEVER places orders.
 State: registry/e5-portfolio.json (a weekly scheduled job appends to decision_log).
 """
-import json, os, sys, time
+import json, os, sys
 import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)

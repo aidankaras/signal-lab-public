@@ -34,3 +34,8 @@ Earliest verdict date: 2026-12-11 (6 weeks of logging from 2026-10-23 + 7d matur
 
 ## Caveats
 Survivorship (profiles/boosts are promoted tokens, not all launches), thin-liquidity quotes aren't executable, no slippage model beyond 3%; DexScreener price of a dead pool may linger (hence the liquidity<$500 rule).
+
+## Status (November 2026)
+Discontinued when the repo was archived. One day of snapshots (33 tokens, 0 approved) is
+committed in `data/`; the gate needs at least 6 weeks and 200 approved tokens, so there is
+no verdict.

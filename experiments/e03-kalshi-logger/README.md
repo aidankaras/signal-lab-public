@@ -1,10 +1,12 @@
 # E3 — kalshi logger
 
-**Verdict: data logger (paper quotes)**
+**Verdict: none — discontinued at archive (paper-quote logger, 2 days of data)**
 
-Each experiment folder is self-contained: runner code, its report (markdown + JSON),
-and `SPEC.md` — the pre-registration written before the run (grids, gates, kill criteria).
-Verdicts come from the shared harness: walk-forward evaluation, costs in every trade,
-same-window comparison vs SPY and a random-entry control, append-only trial registry.
+Contents: `run_e3_logger.py` (stdlib paper-quote logger) and `e3-paper.jsonl`. There is no
+SPEC; the gate is in `registry/experiments.yaml`. This is a data logger, not a backtest: no
+walk-forward and no random control.
 
-See the repo root README for the master results table and the harness design.
+Status: discontinued when the repo was archived (November 2026). Only two days of quotes are
+committed, so the 4-week paper-consistency check was never completed and there is no verdict.
+
+See the repo root README for the results table, the errata and the harness design.

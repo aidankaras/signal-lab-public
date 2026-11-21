@@ -1,5 +1,9 @@
 # e6 SEC-filings baseline (native rebuild) 2026-10-18
 
+> **Errata (November 2026).** Entry was at the filing-date close (not reliably tradable), the
+> embargo was 5 days instead of the pre-registered 10, and the t-stat ignored label overlap.
+> All fixed in `run_e6.py`; the numbers below are from the earlier code. See `README.md`.
+
 Window 2026-07-01→2026-09-09, BROAD-40 universe, Form-4 features, 5-session abnormal-return labels,
 walk-forward logreg (10-day blocks, 5-day embargo).
 

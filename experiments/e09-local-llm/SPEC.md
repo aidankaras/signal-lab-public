@@ -33,4 +33,6 @@ is not expected to change that, and the lane closes.
   retired project's agent arm, which was never run).
 
 ## Status
-Phase 1 in setup: llama.cpp Vulkan build + Qwen GGUF download on the laptop.
+Phase 1 ran 2026-10-19 (n=1360). That run is INVALID: the output parser read every answer as
+UP (see `e9-llm-analyst.md`). Parser fixed November 2026; re-run pending. The kill criterion
+above was applied to the invalid run, so the lane's closure is not supported by data.

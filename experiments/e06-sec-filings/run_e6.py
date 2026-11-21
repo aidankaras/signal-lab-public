@@ -1,6 +1,6 @@
 """python run_e6.py -- e6 SEC-filings baseline, rebuilt natively for the lab harness.
 
-Replaces the legacy pipeline (reference/sec-filings-legacy/, kept for provenance) with the
+Replaces the legacy pipeline (not in this repo; see aidankaras/sec-filings-e6) with the
 lab's own stack: no Docker, no Postgres, no subscription LLM runtime. Free EDGAR + yfinance
 + a dedicated venv only.
 
@@ -33,7 +33,7 @@ from sklearn.linear_model import LogisticRegression
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
 from harness import data
-from harness.evaluator import log_trial
+from harness.evaluator import log_trial, newey_west_t
 
 UA = {"User-Agent": "SignalLab research script (contact: YOUR_EMAIL; SEC requires a real contact)"}
 TICKERS = [t for t in data.BROAD if t != "SPY"]
@@ -41,6 +41,7 @@ START, END = "2026-07-01", "2026-09-09"
 CACHE = os.path.join(ROOT, "data", "cache", "e6_xml")
 FEATURES = os.path.join(ROOT, "data", "cache", "e6_features.csv")
 TR = os.path.join(ROOT, "registry", "trials.jsonl")
+EMBARGO = 10   # filing dates between the last fitted issuer-day and the scored block
 
 
 def get(url, binary=False, retries=3):
@@ -54,7 +55,7 @@ def get(url, binary=False, retries=3):
                 print("HTTP", e.code, url[:80], flush=True)
                 raise
             time.sleep(max(2 ** a, int(e.headers.get("Retry-After", 0)) + 1))
-        except Exception as e:
+        except Exception:
             if a == retries - 1:
                 raise
             time.sleep(2 ** a)
@@ -167,24 +168,26 @@ def labels_and_eval(panel):
         t = r.ticker
         if t not in px.columns: continue
         c = px[t].dropna()
-        pos = c.index.searchsorted(pd.Timestamp(r.date), side="right") - 1
-        if pos < 0 or pos + 5 >= len(c): continue
+        # enter at the first close AFTER the filing date: Form 4s are often filed after the close,
+        # so the filing-date close is not reliably tradable (the first version used it)
+        pos = c.index.searchsorted(pd.Timestamp(r.date), side="right")
+        if pos + 5 >= len(c): continue
         s = spy.reindex(c.index).dropna()
-        spos = s.index.searchsorted(pd.Timestamp(r.date), side="right") - 1
-        if spos < 0 or spos + 5 >= len(s): continue
+        spos = s.index.searchsorted(pd.Timestamp(r.date), side="right")
+        if spos + 5 >= len(s): continue
         rows.append({**r.to_dict(), "fwd_abn": (c.iloc[pos + 5] / c.iloc[pos]) - (s.iloc[spos + 5] / s.iloc[spos])})
     df = pd.DataFrame(rows)
     df["y"] = (df.fwd_abn > 0).astype(int)
     df = df.sort_values("date").reset_index(drop=True)
     feats = ["n", "n_sell", "n_buy", "ln_sell_sh", "ln_buy_sh"]
     dates = sorted(df.date.unique())
-    # embargo: an issuer-day's label closes 5 sessions later; block of 10 scored days,
-    # fitted on all days ending >=5 sessions before the block starts.
-    date_pos = {d: i for i, d in enumerate(dates)}
+    # embargo: an issuer-day's label closes 6 sessions later (next close + 5); block of 10
+    # scored days, fitted on issuer-days at least EMBARGO filing dates before the block
+    # (the docstring's pre-registered 10-day embargo; the first version used 5).
     ics = []
     for b in range(3, len(dates) - 10, 10):  # first 3 dates reserved for the initial fit
         blk = dates[b:b + 10]
-        fit_end_pos = b - 5
+        fit_end_pos = b - EMBARGO
         if fit_end_pos < 3: continue
         fit_dates = dates[:fit_end_pos + 1]
         tr = df[df.date.isin(fit_dates)]
@@ -199,7 +202,7 @@ def labels_and_eval(panel):
             if ic == ic: ics.append(ic)
     ics = np.array(ics)
     ic, n = float(ics.mean()), len(ics)
-    t = float(ic / (ics.std(ddof=1) / np.sqrt(n))) if n > 1 and ics.std() > 0 else 0.0
+    t = newey_west_t(ics, lags=4)   # 5-session labels overlap across consecutive days
     return {"ic_mean": round(ic, 4), "t": round(t, 2), "scored_days": n,
             "issuer_days_total": len(df), "n_events": int(df.n.sum())}
 
@@ -215,18 +218,19 @@ def main():
                 "universe": "BROAD-40 (smaller than legacy whole-EDGAR; flagged)",
                 "verdict": "BEAT" if (res["t"] > 2 and res["ic_mean"] > 0) else "LOSE",
                 "llm_arm": "not-run (needs pinned-model subscription runtime; out of lab scope)"})
+    os.makedirs(os.path.join(ROOT, "reports"), exist_ok=True)
+    json.dump(res, open(os.path.join(ROOT, "reports", "e6-baseline.json"), "w"), indent=1)
+    txt = ["# e6 SEC-filings baseline (native rebuild) " + time.strftime("%Y-%m-%d"), "",
+           f"Window {START}→{END}, BROAD-40 universe, Form-4 features, 5-session abnormal-return labels,",
+           "walk-forward logreg (10-day blocks, 5-day embargo).", "",
+           f"- Daily Spearman IC: **{res['ic_mean']}** (t = {res['t']}, {res['scored_days']} scored days, {res['issuer_days_total']} issuer-days, {res['n_events']} transactions)",
+           f"- Verdict: **{res['verdict']}** (gate: t > 2 and IC > 0). Legacy whole-EDGAR reference: IC +0.029 (t 1.52) = null.",
+           "- LLM arm: not-run (out of lab scope).", ""]
+    open(os.path.join(ROOT, "reports", "e6-baseline.md"), "w").write("\n".join(txt))
     log_trial(TR, {"experiment": "e6_sec_filings",
                    "generation": 0, "stage": "holdout", "params": {"v": 1, "model": "logreg"},
                    "seed": 0, "ic": res["ic_mean"], "t": res["t"], "n": res["scored_days"],
                    "verdict": res["verdict"], "origin": "manual"})
-    json.dump(res, open(os.path.join(ROOT, "reports", "e6-baseline.json"), "w"), indent=1)
-    txt = ["# e6 SEC-filings baseline (native rebuild) " + time.strftime("%Y-%m-%d"), "",
-           f"Window {START}→{END}, BROAD-40 universe, Form-4 features, 5-session abnormal-return labels,",
-           f"walk-forward logreg (10-day blocks, 5-day embargo).", "",
-           f"- Daily Spearman IC: **{res['ic_mean']}** (t = {res['t']}, {res['scored_days']} scored days, {res['issuer_days_total']} issuer-days, {res['n_events']} transactions)",
-           f"- Verdict: **{res['verdict']}** (gate: t > 2 and IC > 0). Legacy whole-EDGAR reference: IC +0.029 (t 1.52) = null.",
-           f"- LLM arm: not-run (out of lab scope).", ""]
-    open(os.path.join(ROOT, "reports", "e6-baseline.md"), "w").write("\n".join(txt))
     print(json.dumps(res, indent=1))
 
 

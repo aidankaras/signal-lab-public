@@ -5,13 +5,14 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, ROOT)
 from harness import data, report
 from harness.benchmark import spy_returns
-from harness.evaluator import metrics, evaluate
+from harness.evaluator import evaluate
 from harness.improve import run_experiment
 from harness.strategies.ma_baseline import E0
 from harness.strategies.hmm_regime import E1
 from harness.strategies.random_control import RandomControl
 
 TR = os.path.join(ROOT, "registry", "trials.jsonl")
+os.makedirs(os.path.join(ROOT, "reports"), exist_ok=True)  # reports/ is not committed
 close = data.fetch(refresh="--refresh" in sys.argv).dropna()
 bench = spy_returns(close)
 au = data.audit(close)

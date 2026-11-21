@@ -5,6 +5,34 @@
 win rate 26%) after spread and slippage. Development-period mean was
 +0.16R, so the edge did not survive out of sample.
 
+> **Errata (November 2026): look-ahead inside the 4H break candle.** `resample("4h")` labels
+> bars by their start time, and the runner started the retest/trigger scan at that start, so
+> it could enter while the break candle was still open; its invalidation check also read the
+> close of a 4H bar that had not closed yet. In the committed trade lists, 29–31% of trades in
+> every gated variant (and 54% of `abl_no_trigger`) have `entry_time` earlier than
+> `break_time + 4h`. Across the ten committed trade lists those trades average +0.10R to +0.44R;
+> the remaining trades average −0.07R to +0.09R (+0.19R for `abl_no_trigger`).
+> The 80% truncation test below cannot detect this kind of within-bar leak.
+>
+> What this changes, computed from the committed CSVs by simply dropping the affected trades
+> (an approximation; a corrected re-run would also find some later entries):
+>
+> | variant | holdout n (all) | holdout mean R (all) | holdout n (clean) | holdout mean R (clean) | t (clean) |
+> |--|--|--|--|--|--|
+> | primary_3R_1pos | 152 | -0.04 | 111 | -0.12 | -0.72 |
+> | tp2R_1pos | 166 | +0.05 | 123 | -0.02 | -0.12 |
+> | tp4R_1pos | 144 | +0.01 | 104 | -0.15 | -0.76 |
+> | tp3R_perpair | 202 | -0.14 | 153 | -0.22 | -1.67 |
+> | tp2R_perpair | 207 | -0.05 | 158 | -0.14 | -1.21 |
+> | tp4R_perpair | 198 | -0.12 | 150 | -0.23 | -1.51 |
+>
+> Development period, `abl_no_trigger`: all 1,063 trades +0.30R (t 5.10); the 493 clean trades
+> +0.19R (t 2.27). So the ablation that motivated the follow-up was inflated by the leak, and
+> the follow-up tests (2003–14 and 2022+) ran on the same code and are tainted too.
+> **The LOSE verdict stands** (the leak favoured the strategy, and every variant is lower without
+> it). `run_e20.py` is fixed (scan starts at the break candle's close; invalidation uses only
+> closed 4H bars); the numbers in this report are from the earlier code, pending a re-run.
+
 ## Setup
 - Claim: a retail FX educator's "break, retest, engulfing candle" setup with
   trend filter, round-number areas of interest and day-of-week vetoes
@@ -13,9 +41,10 @@ win rate 26%) after spread and slippage. Development-period mean was
   (USDCHF, AUDCAD to 2026-08-31). 10–13 months per pair absent from the feed
   are recorded in `results/results.json` (`ranges`) and the fetch log.
 - Split: development 2015–2021 (inspectable), holdout 2022-01-01 → end, scored once.
-- Costs: per-pair spread (0.8–3 pips) + 0.5 pip slippage per side; 1% risk per trade.
+- Costs: per-pair spread (0.8–2.5 pips) + 0.5 pip slippage per side; 1% risk per trade.
 - No-lookahead test: truncating the input at 80% reproduces the identical trade
-  list up to the cut (78/78 trades) — passed.
+  list up to the cut (78/78 trades) — passed. This test does not catch look-ahead inside a
+  4H bar; see the errata above.
 
 ## Gates (holdout, primary variant; all must pass for BEAT)
 | gate | requirement | result | pass |
@@ -80,7 +109,10 @@ subsequently pre-registered and tested out-of-sample in two rounds:
 untouched 2003–2014 data (n=624, +0.25R, t=3.34, but failed the pre-registered
 gate and decays to ~0 by 2012–14) and 2022+ (n=296, +0.11R, t=1.01, LOSE vs
 buy-and-hold S&P; ~0R in 2025–26). **The edge does not survive; FX lane
-closed.** Details in the private lab registry, not published here.
+closed.** Details in the private lab registry, not published here. Note: these follow-up
+runs used the runner with the within-bar look-ahead described in the errata, which favours
+the strategy; the conclusion (no edge) is if anything stronger, but the follow-up numbers are
+not reliable.
 
 ## Caveats
 - 152 holdout trades is enough to reject a strong edge but not a small one

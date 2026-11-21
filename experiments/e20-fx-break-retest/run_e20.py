@@ -4,6 +4,16 @@ Usage: python run_e20.py [outdir]
 Reads $E20_HOME/data/{PAIR}_h1.csv (UTC hourly, Dukascopy; default E20_HOME = this folder).
 Writes out/results.json, out/trades_<variant>.csv.
 All logic causal: signals on closed bars, entry at next 1H open.
+
+Errata (2026-11): 4H bars from resample("4h") are labelled by their START time. The first
+version began the retest/trigger scan at that start, i.e. while the break candle was still
+open, and its invalidation check read the close of the 4H bar that contained the current 1H
+bar (not yet closed). About 30% of trades in every committed variant (54% of abl_no_trigger)
+entered before the break candle had closed. Now the scan starts at the first 1H bar at or
+after the break candle's close (start + 4h), the stop extreme starts from the break candle's
+completed range, the bias/AOI date is taken from the break close, and invalidation uses only
+4H bars that have closed by the end of the current 1H bar. The committed results/ were
+produced by the earlier code and are pending a re-run (data is not committed).
 """
 import json, os, sys
 import numpy as np
@@ -105,22 +115,18 @@ def bullish_engulf(o, c, k):
 def gen_trades(pair, df, use_round=True, use_trigger=True, use_trend=True,
                use_vetoes=True):
     """Return list of trade dicts for one pair."""
-    pip = pipval(pair)
     daily, bias, aois = build_context(pair, df, use_round)
     h4 = df.set_index("time").resample("4h").agg(
         o=("open", "first"), h=("high", "max"), l=("low", "min"),
         c=("close", "last")).dropna()
     h4t = h4.index.values
-    h4c, h4h = h4.c.values, h4.h.values
-
-    t = df.time.values
-    o, h, l, c = df.open.values, df.high.values, df.low.values, df.close.values
-    n = len(df)
+    h4c = h4.c.values
     trades = []
     for brk_k in range(1, len(h4)):
-        T4 = h4t[brk_k]
+        # h4t holds bar START times; the break is only known when the bar closes, 4h later
+        T4close = pd.Timestamp(h4t[brk_k], tz="UTC") + pd.Timedelta(hours=4)
         # which London date does this 4H close belong to (for bias/AOI)?
-        ld = pd.Timestamp(T4, tz="UTC").tz_convert("Europe/London").date()
+        ld = T4close.tz_convert("Europe/London").date()
         # bias as of previous completed daily bar
         dts = list(daily.index)
         prev_days = [d for d in dts if d < ld]
@@ -158,19 +164,24 @@ def simulate_setup(pair, df, h4, h4t, h4c, brk_k, L, side, use_trigger, use_veto
     pip = pipval(pair)
     t = df.time.values
     o, h, l, c = df.open.values, df.high.values, df.low.values, df.close.values
-    T4 = pd.Timestamp(h4t[brk_k], tz="UTC")
+    T4 = pd.Timestamp(h4t[brk_k], tz="UTC")             # break candle START
+    T4close = T4 + pd.Timedelta(hours=4)                 # break candle CLOSE: first moment it is known
     Tend = T4 + pd.Timedelta(hours=72)
-    i0 = int(np.searchsorted(t, np.datetime64(T4.tz_convert("UTC").tz_localize(None))))
+    i0 = int(np.searchsorted(t, np.datetime64(T4close.tz_localize(None))))
     i1 = int(np.searchsorted(t, np.datetime64(Tend.tz_convert("UTC").tz_localize(None))))
+    if i0 >= len(df):
+        return None
     retested = False
-    extreme = h[i0] if side == "short" else l[i0]
-    for k in range(i0, min(i1 + 48, len(df))):  # allow trigger candle just past window edge? no: window only
-        if k > i1:
-            break
+    # stop extreme starts from the completed break candle's range
+    extreme = h4.h.iloc[brk_k] if side == "short" else h4.l.iloc[brk_k]
+    four_h = np.timedelta64(4, "h")
+    one_h = np.timedelta64(1, "h")
+    for k in range(i0, min(i1 + 1, len(df))):
         tk = pd.Timestamp(t[k], tz="UTC").tz_convert("Europe/London")
-        # invalidation: 4H body close back through L by > 10 pips
-        kh4 = int(np.searchsorted(h4t, t[k], side="right")) - 1
-        if kh4 >= 0 and pd.Timestamp(h4t[kh4], tz="UTC") >= T4:
+        # invalidation: 4H body close back through L by > 10 pips, using only 4H bars that have
+        # closed by the end of this 1H bar (start + 4h <= t[k] + 1h)
+        kh4 = int(np.searchsorted(h4t, t[k] + one_h - four_h, side="right")) - 1
+        if kh4 > brk_k:
             if (side == "short" and h4c[kh4] > L + 10 * pip) or \
                (side == "long" and h4c[kh4] < L - 10 * pip):
                 return None
@@ -212,10 +223,9 @@ def simulate_setup(pair, df, h4, h4t, h4c, brk_k, L, side, use_trigger, use_veto
         if not (15 * pip - 1e-12 <= dist <= 40 * pip + 1e-12):
             return None
         cost = (SPREAD[pair] + 2 * SLIP) * pip
-        net_sl = dist + cost  # effective adverse move to stop incl costs
         return dict(pair=pair, side=side, level=L, entry_time=str(pd.Timestamp(t[entry_k], tz="UTC")),
                     entry=entry, sl=sl, dist=dist, cost=cost, entry_k=entry_k,
-                    trigger_time=str(tk), break_time=str(T4))
+                    trigger_time=str(tk), break_time=str(T4), break_close=str(T4close))
     return None
 
 
@@ -289,7 +299,7 @@ def random_control(df_by_pair, sl_dists, R, n_strats=2000, seed=20, n_per=80):
             pair = PAIRS[rng.integers(len(PAIRS))]
             df = df_by_pair[pair]
             pip = pipmap[pair]
-            o, h, l, c = df.open.values, df.high.values, df.low.values, df.close.values
+            o = df.open.values
             k = int(rng.integers(600, len(df) - 2000))
             tk = pd.Timestamp(df.time.values[k], tz="UTC").tz_convert("Europe/London")
             # eligibility: trigger closes 07-17, entry days Mon/Tue/Wed
@@ -315,8 +325,6 @@ def random_control(df_by_pair, sl_dists, R, n_strats=2000, seed=20, n_per=80):
 def baseline(df_by_pair):
     """Daily MA20/100 trend-follow, 1% risk w/ 2*ATR(20) stop, same costs."""
     eq = 1.0
-    curve = []
-    rets = []
     allret = {}
     for pair, df in df_by_pair.items():
         pip = pipval(pair)

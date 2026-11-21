@@ -1,6 +1,9 @@
 # e5 — Thesis-research paper book (pre-registered 2026-10-20)
 
 Written 2026-10-18. Paper only, never real orders.
+(Both dates are as originally written. The book was seeded at the 2026-10-20 close. An earlier
+draft with different rules is in `SPEC-draft-2026-10-18.md`; this file is the one `run_e5.py`
+implements.)
 
 - Book: 10 positions, 10% each, equal-weight entry on 2026-10-20 close, rebalance quarterly,
   every pick carries a written thesis and falsifier (in `registry/e5-portfolio.json`).

@@ -9,7 +9,7 @@ R = C.pct_change(); MOM = C / C.shift(20) - 1
 def sharpe(x): x = np.asarray(x, float); s = x.std(ddof=1); return float(x.mean() / s * np.sqrt(252)) if s > 0 else 0.0
 def run(W, dates, h, rets):
     """W: array [n_dec, 14] weights set at close of decision dates; returns daily net series from day after first decision to end."""
-    idx = C.index; out = []; prev = np.zeros(len(TICK)); first = idx.get_loc(dates[0])
+    idx = C.index; out = []; prev = np.zeros(len(TICK))
     for k, d in enumerate(dates):
         i = idx.get_loc(d); j = idx.get_loc(dates[k + 1]) if k + 1 < len(dates) else len(idx) - 1
         if j <= i: break

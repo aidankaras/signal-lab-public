@@ -1,7 +1,11 @@
 """Record today's pre-open calls (append-only) and, for e16b LONG, place the Alpaca PAPER market-on-open buy.
 usage: python e16b_record.py --spy LONG|FLAT --p 0.0-1.0 --pick TICKER|NONE --why "one line" """
-import argparse, datetime as dt, sys
-from common import CALLS, FILLS, NY, E17_UNIVERSE, append, rows, alpaca
+import argparse
+import datetime as dt
+import sys
+
+from common import CALLS, E17_UNIVERSE, FILLS, NY, alpaca, append, rows
+
 QTY = 15
 a = argparse.ArgumentParser(); a.add_argument("--spy", required=True, choices=["LONG", "FLAT"]); a.add_argument("--p", type=float, required=True)
 a.add_argument("--pick", required=True, choices=E17_UNIVERSE + ["NONE"]); a.add_argument("--why", default=""); a.add_argument("--model", default="unknown")

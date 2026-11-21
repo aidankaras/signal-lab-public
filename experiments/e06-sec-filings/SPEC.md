@@ -9,11 +9,11 @@ SecFilings. The old name is retired everywhere; its cross-family-review arm was
 - Baseline arm (logistic regression on Form-4/8-K features), walk-forward, point-in-time
   content-hashed evidence packets, embargoed chronological split:
   **no measurable skill** — mean IC +0.029 (t = 1.52) over 60 OOS days / 3,909 issuer-days;
-  Brier skill −0.0015 (noise). Full report: `experiments/e6-sec-filings/reports/baseline-insider.md`.
+  Brier skill −0.0015 (noise). The full report is in the companion repo aidankaras/sec-filings-e6, not here.
 - An earlier smaller-sample result (+0.121) was withdrawn after row duplication was found —
-  the withdrawal record is preserved in `reports/withdrawn/`. That honesty record is part of
+  the withdrawal record is kept in the companion repo, not here. That honesty record is part of
   why this is worth keeping.
-- The agent-arm scored run was pending at fold time (protocol: `docs/agent-arm.md`).
+- The agent-arm scored run was pending at fold time (its protocol document is not published in this repo).
 
 ## Relationship to e2
 e2 (insider Form-4 clusters) was killed 2026-10-18 at v0 (AUC 0.498 < 0.55) on counts alone.

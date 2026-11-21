@@ -1,11 +1,14 @@
 """python run_e7.py -- claimed day-trading setups, tested as stated (pre-registration:
-experiments/experiment-7-claimed-setups.md). Offline-executed (needs pandas/yfinance).
+experiments/e07-daytrading-setups/SPEC.md). Needs network (yfinance).
 
 Setups (no parameter tuning — rules as claimed in retail day-trading literature):
   e7a ORB 15-min breakout with VWAP-side filter
   e7b VWAP reclaim on relative volume > 1.3
-  e7c VWAP-extreme mean reversion (>2x 20-bar ATR from VWAP)
-  e7d gap-and-go (daily, gap > 2% on 3x RVOL, exit at close)
+  e7c VWAP-extreme mean reversion (>2x 20-bar ATR from VWAP; short above VWAP, long below)
+  e7d gap-and-go continuation (daily). The claimed rule enters at the gap day's open, but
+      "3x RVOL" uses the gap day's full-day volume, which is not known at the open. To stay
+      causal this runner enters the NEXT day's open and exits at its close. That is a
+      different rule from the claim and is reported as such.
 
 Data: yfinance 5-minute bars, last 60 days (platform limit — a regime sample, flagged),
 BROAD-40 universe. Fills: next-bar open after trigger; stop/target intraday; forced exit
@@ -14,6 +17,12 @@ round trips must clear this).
 
 Verdict: expectancy per round trip, total return vs SPY buy-and-hold and a random-entry
 control with the same number of trades, over the identical window. Logged to trials.jsonl.
+
+Errata (2026-11): in the 2026-10-19 run the e7a ORB short leg called simulate() without
+side="short", so the long-side stop check (low <= stop, where stop = range high above entry)
+fired on the first bar and booked every short as a win. e7c always shorted, including
+extremes below VWAP. Both are fixed below; the e7a and e7c numbers in e7-setups.* are from the
+buggy run and are pending a re-run.
 """
 import json, os, sys, time
 import numpy as np
@@ -70,7 +79,6 @@ def orb_trades(df):
         vwap = (d.Close * d.Volume).cumsum() / d.Volume.cumsum()
         after = d.iloc[3:]
         for i in range(len(after)):
-            ts = after.index[i]
             if after.Close.iloc[i] > hi and after.Close.iloc[i] > vwap.iloc[3 + i]:
                 risk = after.Close.iloc[i] - lo
                 if risk <= 0: continue
@@ -83,7 +91,8 @@ def orb_trades(df):
                 if risk <= 0: continue
                 tail = after.iloc[i + 1:][["Open", "High", "Low", "Close"]]
                 if len(tail):
-                    trades.append(simulate(tail.Open.iloc[0], hi, tail.Open.iloc[0] - 2 * risk, tail))
+                    trades.append(simulate(tail.Open.iloc[0], hi, tail.Open.iloc[0] - 2 * risk, tail,
+                                           side="short"))
                 break
     return trades
 
@@ -110,13 +119,17 @@ def vwap_trades(df, kind):
             if kind == "fade" and abs(px - vw) > 2 * tp.iloc[i]:
                 risk = 0.5 * tp.iloc[i]
                 tail = d.iloc[i + 1:][["Open", "High", "Low", "Close"]]
-                trades.append(simulate(tail.Open.iloc[0], px + risk, px - 2 * risk, tail, side="short"))
+                if px > vw:   # stretched above VWAP -> fade short
+                    trades.append(simulate(tail.Open.iloc[0], px + risk, px - 2 * risk, tail, side="short"))
+                else:         # stretched below VWAP -> fade long
+                    trades.append(simulate(tail.Open.iloc[0], px - risk, px + 2 * risk, tail))
                 break
     return trades
 
 
 def gap_and_go(bars_d):
-    """Daily: gap >2% on 3x 20d RVOL, enter at open, exit at close."""
+    """Daily: day t gaps >2% on 3x 20d RVOL (day t's full volume, known only after the close);
+    enter at day t+1's open, exit at day t+1's close. Causal, but not the claimed same-day rule."""
     trades = []
     for t in TICKERS:
         df = bars_d.get(t)
@@ -196,12 +209,7 @@ def main():
     res["verdict"] = "BEAT" if any(
         (res[k]["expectancy"] or -1) > 0 and res[k]["n"] >= 30 and res[k]["total"] > res["spy_buyhold"]
         for k in ["e7a_orb", "e7b_vwap_reclaim", "e7c_vwap_fade", "e7d_gap_and_go"]) else "LOSE"
-    log_trial(os.path.join(ROOT, "registry", "trials.jsonl"),
-              {"experiment": "e7_claimed_setups", "generation": 0, "stage": "holdout",
-               "params": {"v": 1, "cost_rt_bps": 14}, "seed": 0,
-               "expectancies": {k: res[k]["expectancy"] for k in
-                                ["e7a_orb", "e7b_vwap_reclaim", "e7c_vwap_fade", "e7d_gap_and_go"]},
-               "verdict": res["verdict"], "origin": "manual"})
+    os.makedirs(os.path.join(ROOT, "reports"), exist_ok=True)
     json.dump(res, open(os.path.join(ROOT, "reports", "e7-setups.json"), "w"), indent=1, default=str)
     lines = ["# e7 — claimed day-trading setups, tested as stated " + time.strftime("%Y-%m-%d"), "",
              f"Window: {res['window']}. BROAD-40. Costs {COST_RT*1e4:.0f}bps/round trip. Rules as claimed, untuned.", ""]
@@ -212,6 +220,13 @@ def main():
               f"Verdict: **{res['verdict']}** — expectancy after 14bps round-trip costs is what the claims never publish.",
               "", "Caveat: 5m history is ~60 days (platform limit) — a single regime sample; a PASS promotes to paper-forward only."]
     open(os.path.join(ROOT, "reports", "e7-setups.md"), "w").write("\n".join(lines))
+    # log only after outputs are written, so a crash cannot leave an orphan trial row
+    log_trial(os.path.join(ROOT, "registry", "trials.jsonl"),
+              {"experiment": "e7_claimed_setups", "generation": 0, "stage": "holdout",
+               "params": {"v": 2, "cost_rt_bps": 14, "fix": "orb short side, fade direction"}, "seed": 0,
+               "expectancies": {k: res[k]["expectancy"] for k in
+                                ["e7a_orb", "e7b_vwap_reclaim", "e7c_vwap_fade", "e7d_gap_and_go"]},
+               "verdict": res["verdict"], "origin": "manual"})
     print(json.dumps(res, indent=1, default=str))
 
 

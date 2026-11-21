@@ -15,3 +15,9 @@ Takeaway: the classic 12-1 TSMOM edge (dev Sharpe 0.60, t 2.59) vanished after 2
 
 Disclosure: a bug in the lookahead test (not the strategy) was fixed before any result was read.
 Caveat (unverified): the BTC variant's daily series includes BTC weekend days, so its annualised Sharpe/t (×√252) is approximate. The three ETF-only variants, including the best (long-only 0.52), are not affected, and no variant would change verdict.
+
+## Deviations from SPEC (noted November 2026)
+- The random-sign control used 1,000 draws (`N_CTRL = 1000` in `run_e22.py`), not the 2,000 in
+  `SPEC.md`. The committed `results/results.json` was produced with 1,000.
+- The SPEC says all 4 trials are appended to `registry/trials.jsonl`; `run_e22.py` does not do
+  this, and the registry has no e22 rows.

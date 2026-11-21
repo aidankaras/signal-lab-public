@@ -159,7 +159,6 @@ def main():
         for tag, a, b in [("is", IS0, OOS0), ("oos", OOS0, None)]:
             m = (net.index >= a) & ((net.index < b) if b else True)
             pw = w[m]; tr = trades(pw * n, px[m])
-            yrs = pd.Series(1, index=pw.index[(pw.diff().fillna(0) > 0).any(axis=1)]).groupby(lambda d: d.year).size()
             row[tag] = {**metrics(net[m]), "trades": int(len(tr)),
                         "pf": round(float(tr[tr > 0].sum() / -tr[tr < 0].sum()), 2) if (tr < 0).any() else None,
                         "years_30plus": int((((pw > 0) & ~(pw.shift().fillna(0) > 0)).sum(axis=1).groupby(lambda d: d.year).sum() >= 30).sum()),

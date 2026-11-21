@@ -22,7 +22,7 @@ def metrics(x: pd.Series) -> dict:
     tot = float((1 + x).prod())
     cagr = tot ** (252 / n) - 1 if tot > 0 else -1.0
     sd = float(x.std(ddof=1))
-    down = x[x < 0].std(ddof=1)
+    down = math.sqrt(float((np.minimum(x, 0.0) ** 2).mean()))  # downside deviation (target 0)
     eq = (1 + x).cumprod()
     return {"cagr": _r(cagr), "sharpe": _r(x.mean() / sd * math.sqrt(252) if sd > 0 else 0.0),
             "sortino": _r(x.mean() / down * math.sqrt(252) if down and down > 0 else 0.0),
@@ -38,11 +38,28 @@ def evaluate(strat: pd.Series, bench: pd.Series) -> dict:
     if "error" in s:
         return s
     ex = df.s - df.b
-    beat = bool((1 + ex).prod() > 1)
+    # Compare compounded total returns. (1 + s - b).prod() > 1 is not equivalent and can
+    # call a strategy that out-returns the benchmark a LOSE when the benchmark is volatile.
+    beat = bool((1 + df.s).prod() > (1 + df.b).prod())
     return {"strategy": s, "benchmark_sp500": b, "alpha_annualized": _r(ex.mean() * 252),
             "tracking_diff_total": _r(s["total_return"] - b["total_return"]),
             "beat_sp500": beat, "verdict": "BEAT" if beat else "LOSE",
             "window": [str(df.index[0].date()), str(df.index[-1].date())]}
+
+
+def newey_west_t(x, lags: int) -> float:
+    """t-stat of the mean of x with a Newey-West (Bartlett kernel) long-run variance.
+    Use for daily series built from overlapping h-day labels (lags = h - 1)."""
+    x = np.asarray(x, dtype=float)
+    x = x[~np.isnan(x)]
+    n = len(x)
+    if n < 2:
+        return 0.0
+    e = x - x.mean()
+    lrv = float(e @ e) / n
+    for k in range(1, min(lags, n - 1) + 1):
+        lrv += 2 * (1 - k / (lags + 1)) * float(e[k:] @ e[:-k]) / n
+    return float(x.mean() / math.sqrt(lrv / n)) if lrv > 0 else 0.0
 
 
 def deflated_sharpe(sr_daily: float, n_obs: int, trial_srs_daily, skew=0.0, kurt=3.0) -> float:

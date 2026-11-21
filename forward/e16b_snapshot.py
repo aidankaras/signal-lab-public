@@ -1,6 +1,12 @@
 """Print the pre-open snapshot the agent sees (JSON). Prior-day data + live overseas/futures quotes only."""
-import json, re, statistics as st, datetime as dt
-from common import chart, get, E17_UNIVERSE, NY
+import datetime as dt
+import json
+import re
+import statistics as st
+
+from common import E17_UNIVERSE, NY, chart, get
+
+
 def rets(rows):
     c = [r[2] for r in rows]; d = [c[i]/c[i-1]-1 for i in range(1, len(c))]
     return {"last_close_date": rows[-1][0], "ret1": round(d[-1], 4), "ret5": round(c[-1]/c[-6]-1, 4), "ret20": round(c[-1]/c[-21]-1, 4),

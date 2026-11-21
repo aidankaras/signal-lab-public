@@ -6,7 +6,7 @@
  "up_base_rate": 0.4772,
  "model_up_rate": 1.0,
  "binom_p_vs_50": 0.0981,
- "ic": NaN,
- "ic_t": NaN,
+ "ic": null,
+ "ic_t": null,
  "verdict": "LOSE"
 }

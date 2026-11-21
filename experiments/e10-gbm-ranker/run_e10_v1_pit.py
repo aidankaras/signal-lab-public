@@ -26,10 +26,9 @@ def member_on(ms, md, d):
 
 def panel(px, vol, ms, md):
     spy = px["SPY"]; rows = []
-    cover = {}
     for t in px.columns:
         if t == "SPY": continue
-        c = px[t]; v = vol[t] if t in vol else None
+        c = px[t]
         r = c.pct_change()
         f = pd.DataFrame({"mom21": c.pct_change(21), "mom63": c.pct_change(63), "mom126": c.pct_change(126),
             "rev5": -c.pct_change(5), "vol21": r.rolling(21).std(),
@@ -69,7 +68,6 @@ def run():
     rng = np.random.default_rng(SEED)
     ics, strat, ew, rnd = [], [], [], []
     prev = set(); prev_r = [set() for _ in range(N_RAND)]
-    pos = {d: i for i, d in enumerate(dates)}
     for b in range(1, len(dates) - step, step):
         blk = dates[b:b + step]; tr = df[df.date <= dates[b - emb - 1]]
         if len(tr) < 5000 or tr.y.nunique() < 2: continue

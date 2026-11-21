@@ -17,6 +17,7 @@ from harness.strategies.factors import FACTORS
 
 CUTOFF = "2023-05-01"
 TR = os.path.join(ROOT, "registry", "trials.jsonl")
+os.makedirs(os.path.join(ROOT, "reports"), exist_ok=True)  # reports/ is not committed
 close_all = data.fetch(data.BROAD, start="2013-01-01", refresh="--refresh" in sys.argv, name="broad").dropna()
 close = close_all[close_all.index < CUTOFF]
 bench = spy_returns(close)

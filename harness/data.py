@@ -12,12 +12,24 @@ BROAD = ["SPY", "AAPL", "MSFT", "AMZN", "GOOGL", "META", "NVDA", "TSLA", "BRK-B"
 START = "2005-01-01"
 
 
+def covers(cached: pd.DataFrame, tickers, start) -> bool:
+    """True if a cached panel has every requested ticker and starts within a week of `start`."""
+    missing = set(tickers) - set(cached.columns)
+    return not missing and len(cached) > 0 and cached.index[0] <= pd.Timestamp(start) + pd.Timedelta(days=7)
+
+
 def fetch(tickers=UNIVERSE, start=START, refresh=False, name="prices"):
-    """Adjusted close panel, cached to data/cache/prices.csv."""
+    """Adjusted close panel, cached to data/cache/<name>.csv.
+
+    The cache is reused only if it holds every requested ticker from (about) the requested start.
+    Otherwise it is re-downloaded. Before this check a request for BROAD silently returned the
+    8-ticker `prices.csv` cache (this is what broke e13's first run)."""
     os.makedirs(CACHE, exist_ok=True)
     path = os.path.join(CACHE, name + ".csv")
     if os.path.exists(path) and not refresh:
-        return pd.read_csv(path, index_col=0, parse_dates=True)
+        cached = pd.read_csv(path, index_col=0, parse_dates=True)
+        if covers(cached, tickers, start):
+            return cached
     import yfinance as yf
     d = yf.download(list(tickers), start=start, auto_adjust=True, progress=False)["Close"]
     d = d.dropna(how="all").sort_index()

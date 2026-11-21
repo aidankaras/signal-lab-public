@@ -12,7 +12,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import roc_auc_score
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-RT = 20.0 / 1e4          # 5bps/side + 5bps slippage/side = 20 bps round trip
+# Pre-registered: 5bps/side + 5bps slippage/side = 20 bps round trip. That is conservative for SPY
+# (sub-bp spread, near-zero commissions); set E16_RT_BPS to rerun at another cost level.
+RT = float(os.environ.get("E16_RT_BPS", "20")) / 1e4
 OOS0, STEP, EMB = "2010-01-01", 63, 1
 START = "2004-06-01"
 
@@ -38,7 +40,7 @@ def load():
 
 def build(px):
     s = px["SPY"][["Open", "High", "Low", "Close"]].dropna()
-    o, h, l, c = s.Open, s.High, s.Low, s.Close
+    o, c = s.Open, s.Close
     f = pd.DataFrame(index=s.index)
     c1 = c.shift(1)
     f["gap"] = o / c1 - 1

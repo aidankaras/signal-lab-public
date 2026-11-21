@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from harness.evaluator import evaluate, log_trial, metrics, read_trials  # noqa: E402
+from harness.evaluator import evaluate, log_trial, metrics, newey_west_t, read_trials  # noqa: E402
 from harness.experiment import simulate  # noqa: E402
 from harness.verdict import strict  # noqa: E402
 
@@ -66,6 +66,18 @@ def test_evaluate_beat_and_lose():
     assert evaluate(pd.Series(0.0, index=idx), bench)["verdict"] == "LOSE"
 
 
+def test_evaluate_beat_compares_total_returns():
+    # Volatile benchmark: prod(1 + s - b) < 1 even though the strategy's total return is higher.
+    idx = pd.bdate_range("2020-01-01", periods=60)
+    bench = pd.Series(np.tile([0.05, -0.04], 30), index=idx)
+    strat = pd.Series(0.0041, index=idx)  # total +27.8% vs bench +27.0%
+    ev = evaluate(strat, bench)
+    assert ev["strategy"]["total_return"] > ev["benchmark_sp500"]["total_return"]
+    assert ev["verdict"] == "BEAT"
+    # and the mirror case still loses
+    assert evaluate(pd.Series(0.0035, index=idx), bench)["verdict"] == "LOSE"
+
+
 def _ev(beat, sharpe, cagr):
     return {"beat_sp500": beat, "strategy": {"sharpe": sharpe, "cagr": cagr}}
 
@@ -92,3 +104,31 @@ def test_trials_are_append_only(tmp_path):
     assert len(read_trials(p)) == 2
     assert [t["experiment"] for t in read_trials(p, "x")] == ["x"]
     assert read_trials(str(tmp_path / "missing.jsonl")) == []
+
+
+def test_fetch_cache_must_cover_request(tmp_path, monkeypatch):
+    import harness.data as hd
+    monkeypatch.setattr(hd, "CACHE", str(tmp_path))
+    idx = pd.to_datetime(["2005-01-03", "2005-01-04"])
+    pd.DataFrame({"SPY": [1.0, 1.01], "AAPL": [1.0, 1.02]}, index=idx).to_csv(tmp_path / "prices.csv")
+    assert list(hd.fetch(tickers=["SPY", "AAPL"], start="2005-01-01").columns) == ["SPY", "AAPL"]
+    assert hd.covers(pd.read_csv(tmp_path / "prices.csv", index_col=0, parse_dates=True), ["SPY"], "2005-01-01")
+    cached = pd.read_csv(tmp_path / "prices.csv", index_col=0, parse_dates=True)
+    assert not hd.covers(cached, hd.BROAD, "2005-01-01")      # missing tickers -> not reused
+    assert not hd.covers(cached, ["SPY"], "2000-01-01")       # starts too late -> not reused
+
+
+def test_newey_west_t_deflates_overlapping_series():
+    rng = np.random.default_rng(0)
+    d = rng.normal(0.0, 1.0, 5005)
+    iid = d[:5000] + 0.03
+    over = pd.Series(d).rolling(5).sum().dropna().values[:5000] / 5 + 0.03   # 5-day overlapping average
+    naive = over.mean() / over.std(ddof=1) * math.sqrt(len(over))
+    assert math.isclose(newey_west_t(iid, 0), iid.mean() / iid.std(ddof=0) * math.sqrt(len(iid)), rel_tol=1e-9)
+    assert abs(newey_west_t(over, 4)) < abs(naive) * 0.6   # overlap inflates the naive t by ~sqrt(5)
+
+
+def test_sortino_uses_downside_deviation():
+    x = pd.Series([0.02, -0.01, 0.01, -0.03] * 10)
+    dd = math.sqrt((np.minimum(x, 0) ** 2).mean())
+    assert math.isclose(metrics(x)["sortino"], round(x.mean() / dd * math.sqrt(252), 4), abs_tol=1e-4)

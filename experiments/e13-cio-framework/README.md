@@ -1,10 +1,7 @@
 # E13 — cio framework
 
-**Verdict: pre-registered, not built**
+**Verdict: INVALID — first run (2026-10-20) used the wrong price cache; runner corrected, pending re-run.** See `e13-cio.md`.
 
-Each experiment folder is self-contained: runner code, its report (markdown + JSON),
-and `SPEC.md` — the pre-registration written before the run (grids, gates, kill criteria).
-Verdicts come from the shared harness: walk-forward evaluation, costs in every trade,
-same-window comparison vs SPY and a random-entry control, append-only trial registry.
+Contents: `run_e13.py`, `SPEC.md`, reports. See `e13-cio.md` for the errata.
 
-See the repo root README for the master results table and the harness design.
+See the repo root README for the results table, the errata and the harness design.

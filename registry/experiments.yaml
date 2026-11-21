@@ -1,3 +1,12 @@
+# Original pre-registration file, kept as written (2026-10-18). Known gaps, noted November 2026:
+# - It covers e0-e5 only. Later experiments are pre-registered in their own SPEC*.md files.
+# - The grids here do not match what was run: e0 ran fast [10,20,30] x slow [50,100,200] on the
+#   8-ticker universe (harness/strategies/ma_baseline.py); e1 ran lookback [252,504,756] with a
+#   Gaussian mixture, not an HMM (harness/strategies/hmm_regime.py); e4 ran momentum, reversal,
+#   low-vol and trend (harness/strategies/factors.py), not value+profitability/Alpha158/meta-label.
+#   The code is the record of what was tested; the trial counts are in registry/trials.jsonl.
+# - PBO is not implemented anywhere; only Deflated Sharpe (e0, e1, e4 via harness/improve.py).
+# - e2 was reopened after its kill gate (v1, v2); see experiments/e02-insider-filings/SPEC-v*.md.
 registry:
   experiments:
     - id: e0_rayfu_ma
@@ -33,7 +42,7 @@ eval:
     generations: true
     mutation_k: 3              # variations per generation
     promotion: "beat_prev_champion_oos AND beat_spy"
-    log: "registry/trials.jsonl (append-only, feeds Deflated Sharpe/PBO)"
+    log: "registry/trials.jsonl (append-only, feeds Deflated Sharpe)"
 caps:
   real_money: {lifetime_loss_usd: 100, total_90d_usd: 275, live_probe_usd: 100}
   human_time_per_week_hr: 6
