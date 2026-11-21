@@ -1,6 +1,6 @@
 # E7 — daytrading setups
 
-**Verdict: reclaim/fade LOSE at random-entry control; ORB SUSPECT (single regime)**
+**Verdict: reclaim LOSE (at the random-entry control); ORB INVALID (short leg booked as wins); fade pending re-run (direction bug).** See errata in `e7-setups.md`.
 
 Each experiment folder is self-contained: runner code, its report (markdown + JSON),
 and `SPEC.md` — the pre-registration written before the run (grids, gates, kill criteria).

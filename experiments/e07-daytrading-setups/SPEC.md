@@ -34,12 +34,16 @@ Daily bars — long history available.
   paper-forward trial, never straight to money.
 
 ## Status
-Not run. Bar-fetch pipeline (run_e7.py) to follow the e6 pattern: fetch -> features ->
-walk-forward -> trials.jsonl + report. Expected outcome, given every prior lane: LOSE;
-the interesting output is per-setup expectancy after costs, which is what the claims
-never show.
+Run 2026-10-19 (`run_e7.py`; results below). Written before the run: expected outcome,
+given every prior lane, LOSE; the interesting output is per-setup expectancy after costs.
 
 ## v0 results (2026-10-19, 60 trading days, 40 tickers, 14bps/round trip)
+
+> **Errata (November 2026).** The e7a ORB short leg called the simulator without
+> `side="short"`, so every short breakout was scored as a win. The ORB numbers below are
+> INVALID, not SUSPECT. The sentence under e7c saying the long-only bug was "fixed before
+> reporting" was true only for e7c, not for e7a. e7c also always shorted, even below VWAP.
+> Both are fixed in `run_e7.py`; e7a and e7c are pending a re-run.
 
 - e7a ORB: 2241 trades, expectancy +0.519%, win rate 68.6%. Passes mechanically; recorded
   SUSPECT — single regime, random control uses different stop geometry, additive "total"

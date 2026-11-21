@@ -1,5 +1,12 @@
 # e7 — claimed day-trading setups, tested as stated 2026-10-19
 
+> **Errata (November 2026).** e7a ORB is INVALID: the short leg was simulated as a long, so every
+> short breakout was booked as a win. That is where the +0.519% expectancy and 68.6% win rate on a
+> 2R target come from. e7c VWAP fade always shorted, even when price was stretched below VWAP.
+> The "BEAT" verdict below came from the ORB bug. `run_e7.py` is fixed; e7a/e7c are pending a
+> re-run. e7b (reclaim, long-only) is not affected. e7d enters the day after the gap, not at the
+> gap-day open as claimed (see `run_e7.py`).
+
 Window: 2026-07-01..now (5m data limited to 60d). BROAD-40. Costs 14bps/round trip. Rules as claimed, untuned.
 
 - **e7a_orb**: 2241 trades, expectancy 0.00519, win rate 0.686
