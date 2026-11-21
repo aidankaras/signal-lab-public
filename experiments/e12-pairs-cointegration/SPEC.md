@@ -32,4 +32,7 @@ v1 upgrade only if v0 clears the gate.
   replaces the OLS hedge ratio with a Kalman filter.
 
 ## Status
-Built, running.
+Run 2026-10-19; that run is INVALID (see `e12-pairs.md`): the "one-bar delay" above was not
+implemented, and the P&L was booked against the new position. Corrected in November 2026
+(Engle-Granger critical value -3.90 replaces the ADF -3.44 above; random pairs get a fitted
+hedge ratio; per-year universes keep late listings). Re-run pending.

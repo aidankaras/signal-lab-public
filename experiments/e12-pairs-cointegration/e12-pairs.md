@@ -1,5 +1,14 @@
 # e12 — pairs trading via cointegration 2026-10-19
 
+> **INVALID (errata, November 2026).** The P&L loop updated the position from today's z-score
+> *before* booking today's spread change, so every entry booked the move that triggered it as a
+> loss and every exit dropped the reverting move: a perfect z = +3 -> 0 reversion scored about -6%.
+> Cointegrated (mean-reverting) pairs lose by construction under that bug, so "real pairs
+> underperform random pairs" is not a finding. The P&L was also divided by the spread sd twice,
+> the selection used ADF instead of Engle-Granger critical values, the random pairs used a hedge
+> ratio of 1, and names listed after 2012 were dropped from every year. `run_e12.py` is
+> corrected; the result is pending a re-run.
+
 Walk-forward years 2016-2026, fit on trailing 3y, top-5 pairs, z=+-2/0.5/4, 10bps/pair round trip.
 
 - Mean annual return: **-0.0208** (Sharpe -0.79)

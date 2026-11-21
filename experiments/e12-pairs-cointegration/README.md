@@ -1,6 +1,6 @@
 # E12 — pairs cointegration
 
-**Verdict: LOSE - real pairs underperform random-pairs control**
+**Verdict: INVALID — P&L booked on the signal bar in the wrong direction; runner corrected, pending re-run.** See `e12-pairs.md`.
 
 Each experiment folder is self-contained: runner code, its report (markdown + JSON),
 and `SPEC.md` — the pre-registration written before the run (grids, gates, kill criteria).
