@@ -17,9 +17,10 @@ that point.
 Most published strategy results, especially retail "AI trading bot" posts, do not survive
 out-of-sample testing with realistic costs. This lab ran such claims through one evaluation
 pipeline and recorded what happened. Twenty experiments are indexed below (e00–e22; e11, e15 and
-e21 were never run). No experiment produced a usable edge: the valid results lose to SPY (equity
+e21 were never run). None of the valid results shows a usable edge: they lose to SPY (equity
 strategies) or to random-entry and trend-following controls (FX), and the few that pass a gate
-do so on a survivor-biased universe and are not promoted. Several published verdicts turned out
+do so on a survivor-biased universe and are not promoted. Five runs are INVALID and await a
+re-run. Several published verdicts turned out
 to rest on bugs; they are listed in the errata and relabeled rather than removed.
 
 ## Errata (November 2026)
