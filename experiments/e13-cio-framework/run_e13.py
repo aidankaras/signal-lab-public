@@ -1,15 +1,25 @@
 """python run_e13.py -- e13 "CIO framework" decomposition (pre-registered: experiments/e13-cio-framework/SPEC.md).
 
 Tests the mechanically-testable skeleton of the popular five-stage LLM "CIO" prompt:
-  Stage 1 (macro)    -> regime filter: SPY 200d MA (risk-on) vs below (defensive -> SPY).
+  Stage 1 (macro)    -> regime filter: SPY 200d MA (risk-on) vs below (defensive -> 100% SPY).
   Stage 2 (secular)  -> point-in-time quality tilt from EDGAR companyfacts (annual filings,
                         scored by FILED date, no lookahead): revenue growth consistency,
-                        net-margin level+stability, low D/E, positive ROE.
+                        net-margin level+stability, low D/E, positive ROE (net income / equity).
   Stage 3 (catalyst) -> NOT testable on free timestamped news; logged as not-run (lab rule).
-  Stage 4 (sizing)   -> 5% position cap, 10 names max, monthly rebalance, 5bps/side.
+  Stage 4 (sizing)   -> 5% position cap, 10 names max, monthly rebalance, 5bps/side. The cap leaves
+                        50% unallocated; that remainder is held in SPY so the book is fully invested.
   Stage 5 (table)    -> presentation; not a testable component.
 
-Walk-forward portfolio vs SPY buy-and-hold on identical dates + random-10-names control.
+Walk-forward portfolio vs SPY buy-and-hold on identical dates + random-10-names control
+(equal weight, rebalanced on the same monthly dates, charged its own turnover cost).
+Weights are decided at the close of the rebalance day and earn returns from the next day
+(harness.experiment.simulate), so there is no same-bar look-ahead.
+
+Errata (2026-11): the first run (2026-10-20) silently used the 8-ticker e0 price cache instead
+of BROAD-40 (harness.data.fetch ignored `tickers` when a cache existed), was only 50% invested,
+never moved to SPY when risk-off, earned the decision day's own return, computed ROA instead of
+ROE, and never rebalanced the control. Its numbers are INVALID; this file is the corrected
+runner and has not been re-run yet.
 Universe caveat: BROAD-40 survivorship (same as e10) — a pass is SUSPECT by construction.
 Gate (SPEC): must beat SPY Sharpe on identical dates AND beat the plain e4-style quality
 read; else LOSE and the framework question is closed with data.
@@ -22,6 +32,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, ROOT)
 from harness import data
 from harness.evaluator import log_trial
+from harness.experiment import simulate
 
 UA = {"User-Agent": "SignalLab research script (contact: YOUR_EMAIL; SEC requires a real contact)"}
 TR = os.path.join(ROOT, "registry", "trials.jsonl")
@@ -97,8 +108,9 @@ def annual_metrics(ticker):
         if np.isnan(prev) or prev == 0 or np.isnan(n) or np.isnan(a) or a == 0:
             continue
         de = (l / e) if (e and not np.isnan(e) and e != 0) else np.nan
+        roe = (n / e) if (e and not np.isnan(e) and e != 0) else np.nan
         rows.append({"filed": filed, "date": fy, "rev_growth": v / prev - 1,
-                     "net_margin": n / v, "de": de, "roe": n / a})
+                     "net_margin": n / v, "de": de, "roe": roe})
     df = pd.DataFrame(rows).drop_duplicates("date").sort_values("date")
     # keep one row per filing date (latest amendment only)
     return df.groupby("filed", as_index=False).last() if len(df) else df
@@ -129,8 +141,6 @@ def rank_quality(scores, when):
         if not len(h):
             continue
         r = h.iloc[-1]
-        if (when - h.index[-1]).days > 500:   # stale filing -> hold prior state, still fine
-            pass
         rows.append({"ticker": t, "net_margin": r["net_margin"], "margin_std": r["margin_std"],
                      "rev_growth": r["rev_growth"], "growth_std": r["growth_std"],
                      "de": r["de"], "roe": r["roe"]})
@@ -150,9 +160,10 @@ def sharpe(x):
 
 
 def main():
-    px = data.fetch(tickers=data.BROAD)
+    # name="broad" + start: the cache is only reused if it really holds BROAD-40 (see harness.data.covers)
+    px = data.fetch(tickers=data.BROAD, start="2013-01-01", name="broad")
+    assert set(data.BROAD) <= set(px.columns), "price panel is missing BROAD-40 tickers"
     spy = px["SPY"]
-    rets = px.pct_change()
     scores = quality_scores()
     n_scores = sum(len(m) for m in scores.values())
     print(f"fundamentals: {len(scores)}/{len(TICKERS)} tickers, {n_scores} filing rows", flush=True)
@@ -160,41 +171,32 @@ def main():
         print("not enough fundamentals — aborting (do not fake results)"); return
 
     regime = (spy > spy.rolling(200).mean()).astype(bool)
-    month = None
-    holdings, cost_today = {}, 0.0
-    eq = eq_ctrl = 1.0
-    strat, ctrl, bench = [], [], []
     rng = np.random.default_rng(42)
     control = list(rng.choice(TICKERS, TOPN, replace=False))
-
-    for i, dt in enumerate(px.index):
-        # rebalance once per calendar month when risk-on
-        if regime.iloc[i] and (month is None or dt.month != month):
-            month = dt.month
-            pick = rank_quality(scores, dt)
-            new = {t: min(CAP, 1 / TOPN) for t in pick}
-            turnover = sum(abs(new.get(t, 0) - holdings.get(t, 0)) for t in set(new) | set(holdings))
-            cost_today = turnover * COST
-            holdings = new
-        r = rets.loc[dt] if i else pd.Series(0.0, index=px.columns)
-        if holdings:
-            w = np.array([holdings[t] for t in holdings])
-            rr = np.array([r.get(t, 0.0) if not np.isnan(r.get(t, np.nan)) else 0.0 for t in holdings])
-            day = float((w * rr).sum()) - cost_today
-            day_c = float((np.full(TOPN, 1 / TOPN) *
-                           np.array([r.get(t, 0.0) if not np.isnan(r.get(t, np.nan)) else 0.0
-                                     for t in control])).sum()) - cost_today
-        else:
-            day = day_c = 0.0
-        cost_today = 0.0
-        eq *= 1 + day; eq_ctrl *= 1 + day_c
-        strat.append(day); ctrl.append(day_c)
-        bench.append(0.0 if np.isnan(r["SPY"]) else r["SPY"])
-
-    s = pd.Series(strat, index=px.index); c = pd.Series(ctrl, index=px.index)
-    b = pd.Series(bench, index=px.index)
+    # first trading day of each calendar month; weights decided at that close, held until the next one
+    rebal = px.index.to_series().groupby([px.index.year, px.index.month]).head(1).index
+    w_s = pd.DataFrame(np.nan, index=px.index, columns=px.columns)
+    w_c = pd.DataFrame(np.nan, index=px.index, columns=px.columns)
+    for dt in rebal:
+        row = pd.Series(0.0, index=px.columns)
+        pick = rank_quality(scores, dt) if regime.loc[dt] else []
+        for t in pick:
+            row[t] = min(CAP, 1 / TOPN)
+        row["SPY"] += 1.0 - row.sum()          # risk-off, no picks yet, or cap remainder -> SPY
+        w_s.loc[dt] = row
+        rc = pd.Series(0.0, index=px.columns)
+        rc[control] = 1 / TOPN
+        w_c.loc[dt] = rc
+    w_s, w_c = w_s.ffill().fillna(0.0), w_c.ffill().fillna(0.0)
+    close = px.ffill()
+    s = simulate(close, w_s, cost_bps=COST * 1e4)
+    c = simulate(close, w_c, cost_bps=COST * 1e4)
+    b = close["SPY"].pct_change().fillna(0.0)
+    first = w_s.index[(w_s.sum(axis=1) > 0)][0]     # score from the first day the book is held
+    s, c, b = s.loc[first:], c.loc[first:], b.loc[first:]
+    eq = float((1 + s).prod())
     res = {
-        "experiment": "e13_cio_framework", "window": [str(px.index[0].date()), str(px.index[-1].date())],
+        "experiment": "e13_cio_framework", "window": [str(s.index[0].date()), str(s.index[-1].date())],
         "fundamentals_tickers": len(scores),
         "sharpe_strategy": round(sharpe(s), 3), "sharpe_control": round(sharpe(c), 3),
         "sharpe_spy": round(sharpe(b), 3),
@@ -203,21 +205,22 @@ def main():
     }
     beat = res["sharpe_strategy"] > res["sharpe_spy"] and res["sharpe_strategy"] > res["sharpe_control"]
     res["verdict"] = "BEAT" if beat else "LOSE"
-    log_trial(TR, {"experiment": "e13_cio_framework", "generation": 0, "stage": "holdout",
-                   "params": {"topn": TOPN, "cap": CAP, "regime": "spy>200d_ma"},
-                   "seed": 42, "sharpe_strategy": res["sharpe_strategy"],
-                   "sharpe_spy": res["sharpe_spy"], "verdict": res["verdict"], "origin": "manual"})
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     json.dump(res, open(OUT, "w"), indent=1)
     open(OUT.replace(".json", ".md"), "w").write(
         "# e13 — 'CIO framework' decomposition " + time.strftime("%Y-%m-%d") + "\n\n"
         "Mechanical skeleton of the popular five-stage LLM CIO prompt: SPY-200d-MA regime\n"
-        f"filter, EDGAR point-in-time quality tilt (top {TOPN}, {int(CAP*100)}% cap, monthly), 5 bps/side.\n"
+        f"filter, EDGAR point-in-time quality tilt (top {TOPN}, {int(CAP*100)}% cap, remainder in SPY, monthly), 5 bps/side.\n"
         "Catalyst-sentiment stage: NOT testable on free data — logged not-run.\n\n"
         f"- Strategy Sharpe: **{res['sharpe_strategy']}** vs SPY {res['sharpe_spy']} vs random-10 {res['sharpe_control']}\n"
         f"- Total: strategy {res['total_strategy']:+.1%} vs SPY {res['total_spy']:+.1%}\n"
         f"- Verdict: **{res['verdict']}** (gate: beat SPY AND random control on identical dates)\n"
         "- Universe caveat: BROAD-40 survivorship — even a pass would be SUSPECT (see e10).\n")
+    # log only after the outputs were written, so a crash cannot leave an orphan trial row
+    log_trial(TR, {"experiment": "e13_cio_framework", "generation": 0, "stage": "holdout",
+                   "params": {"topn": TOPN, "cap": CAP, "regime": "spy>200d_ma", "remainder": "SPY"},
+                   "seed": 42, "sharpe_strategy": res["sharpe_strategy"],
+                   "sharpe_spy": res["sharpe_spy"], "verdict": res["verdict"], "origin": "manual"})
     print(json.dumps(res, indent=1))
 
 

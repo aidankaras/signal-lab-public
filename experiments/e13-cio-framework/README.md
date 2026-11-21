@@ -1,6 +1,6 @@
 # E13 — cio framework
 
-**Verdict: pre-registered, not built**
+**Verdict: INVALID — first run (2026-10-20) used the wrong price cache; runner corrected, pending re-run.** See `e13-cio.md`.
 
 Each experiment folder is self-contained: runner code, its report (markdown + JSON),
 and `SPEC.md` — the pre-registration written before the run (grids, gates, kill criteria).

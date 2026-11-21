@@ -28,4 +28,7 @@ test of its mechanically testable components, NOT run as a live persona.
   "have you tried the institutional framework?" question with data instead of opinion.
 
 ## Status
-Pre-registered; not built.
+Built and run 2026-10-20 (`run_e13.py`). That run is INVALID (wrong price cache and
+several runner bugs, listed in `e13-cio.md`). The runner was corrected in November 2026 and
+has not been re-run. The implemented gate is "beat SPY Sharpe and the random-10 control";
+the comparison against the e4 quality read described above was not implemented.
