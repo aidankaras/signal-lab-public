@@ -46,6 +46,13 @@ def form4_weeks(cik):
     return s[(s.index >= START) & (s.index <= END)]
 
 
+def entry_pos(c, week_monday):
+    """Index of the entry close for a Mon-Sun filing week labelled by its Monday: the first close
+    on or after the NEXT Monday, when the whole week's filings are public. (The first version used
+    the close on or before the week's own Monday, up to ~6 days before the counted filings.)"""
+    return int(c.index.searchsorted(week_monday + pd.Timedelta(days=7), side="left"))
+
+
 def main():
     cm = cik_map()
     counts = {}
@@ -78,8 +85,8 @@ def main():
         c = px.get(r.ticker)
         if c is None: continue
         c = c.dropna()
-        pos = c.index.searchsorted(r.week, side="right") - 1
-        if pos < 0 or pos + 21 >= len(c): continue
+        pos = entry_pos(c, r.week)
+        if pos + 21 >= len(c): continue
         labels.append(c.iloc[pos + 21] / c.iloc[pos] - 1); keep.append(r)
     lab = pd.DataFrame(keep); lab["fwd"] = labels
     # rank-AUC: P(random cluster-week beats random all-week)
@@ -92,8 +99,8 @@ def main():
         c = c.dropna(); sub = grid[grid.ticker == t]
         vals = []
         for wk in sub.week:
-            pos = c.index.searchsorted(wk, side="right") - 1
-            if pos < 0 or pos + 21 >= len(c): vals.append(None); continue
+            pos = entry_pos(c, wk)
+            if pos + 21 >= len(c): vals.append(None); continue
             vals.append(c.iloc[pos + 21] / c.iloc[pos] - 1)
         base_rows += [v for v in vals if v is not None]
     cl = np.array(lab.fwd); bl = np.array(base_rows)

@@ -27,7 +27,6 @@ The published "Sharpe 2.08 / 8,689x" is therefore mostly a return-math error, no
 survivorship. This file is the corrected runner; it has not been re-run yet.
 """
 import json, os, sys, time
-import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
 from sklearn.ensemble import HistGradientBoostingClassifier
@@ -35,7 +34,7 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
 from harness.data import BROAD
-from harness.evaluator import log_trial
+from harness.evaluator import log_trial, newey_west_t
 
 FEATS = ["mom21", "mom63", "mom126", "rev5", "vol21", "volz", "hi63_dist", "mkt21"]
 
@@ -70,17 +69,6 @@ def panel():
 def data_fetch():
     from harness import data
     return data.fetch(BROAD, start="2012-01-01", refresh=False, name="broad")
-
-
-def nw_t(x, lags=4):
-    """t-stat of the mean with a Newey-West (Bartlett) long-run variance."""
-    x = np.asarray(x, float); x = x[~np.isnan(x)]; n = len(x)
-    if n < 2: return 0.0
-    e = x - x.mean()
-    lrv = e @ e / n
-    for k in range(1, lags + 1):
-        lrv += 2 * (1 - k / (lags + 1)) * (e[k:] @ e[:-k]) / n
-    return float(x.mean() / np.sqrt(lrv / n)) if lrv > 0 else 0.0
 
 
 H, SIDE_BPS = 5, 5.0   # rebalance every 5 sessions (= label horizon), 5bps per side
@@ -120,7 +108,7 @@ def run():
     p_s = pdf.net
     per = 252 / H
     ic, n = float(ic_s.mean()), len(ic_s)
-    t = nw_t(ic_s.values, lags=H - 1)
+    t = newey_west_t(ic_s.values, lags=H - 1)
     shp = float(p_s.mean() / p_s.std() * per ** .5) if p_s.std() > 0 else 0.0
     shp_gross = float(pdf.gross.mean() / pdf.gross.std() * per ** .5) if pdf.gross.std() > 0 else 0.0
     shp_abn = float(pdf.abn.mean() / pdf.abn.std() * per ** .5) if pdf.abn.std() > 0 else 0.0
