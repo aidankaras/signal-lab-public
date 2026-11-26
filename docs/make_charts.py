@@ -27,8 +27,11 @@ for r in J("e00-ma-baseline/latest.json"):
 for r in J("e04-factor-tilts/e4-latest.json"):
     h = r["champion_holdout"]
     rows.append((r["experiment"].replace("_", " "), h["strategy"]["sharpe"], h["benchmark_sp500"]["sharpe"], True))
-# e10 v0 (overlapping-return error, pre-cost) and e13 (wrong price cache) are INVALID and left out;
-# see the README errata.
+# e10 v0: the November 2026 re-run of the corrected runner (5-session rebalances, 5bps/side).
+# The original v0 JSON is INVALID (overlapping returns compounded daily) and is not plotted.
+# e13 (wrong price cache; re-run pending) is left out; see the README errata.
+v0 = J("e10-gbm-ranker/e10-v0-gbm-rerun-2026-11.json")
+rows.append(("e10 v0 (BROAD-40, re-run)", v0["port_sharpe_net"], v0["spy_sharpe"], True))
 v1 = J("e10-gbm-ranker/e10-v1-survivorship.json")
 rows.append(("e10 v1 (point-in-time)", v1["strat_net_sharpe"], v1["spy_sharpe"], False))
 for k, v in J("e14-thirdparty-etf-rules/e14-results.json").items():
@@ -45,7 +48,7 @@ ax.invert_yaxis()
 ax.set_xlabel("Out-of-sample Sharpe")
 ax.set_title("Signal Lab: out-of-sample Sharpe vs SPY (red = survivor-biased universe)\n"
              "Verdicts use total return and random/equal-weight controls, not Sharpe alone; "
-             "e10 v0 and e13 omitted (invalid runs)", fontsize=9)
+             "e13 omitted (invalid run, re-run pending)", fontsize=9)
 ax.legend(loc="lower right", fontsize=8)
 fig.tight_layout()
 fig.savefig(os.path.join(OUT, "oos_sharpe_vs_spy.png"), dpi=130)

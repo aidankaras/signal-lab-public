@@ -9,7 +9,8 @@
 > Sharpe ~2.08/sqrt(5) = 0.93 and IC t ~4.63/sqrt(5) = 2.07; the 8,689x total corresponds to
 > roughly 14.7%/yr of pre-cost abnormal return (ln(8,689.9)/13.27 years/5), against SPY's 14.5%/yr
 > total return. The verdict is INVALID; `run_e10_v0.py` now rebalances every 5 sessions, charges
-> 5bps/side, holds total returns, and uses a Newey-West t-stat. Re-run pending.
+> 5bps/side, holds total returns, and uses a Newey-West t-stat. The November 2026 re-run is in
+> `e10-v0-gbm-rerun-2026-11.md`: IC t 2.03, net Sharpe 1.07 vs SPY 0.97, SUSPECT, not promoted.
 
 Window 2013-07-03 -> 2026-10-09, BROAD-40, weekly-ish blocks (63 sessions), 5-day embargo.
 
