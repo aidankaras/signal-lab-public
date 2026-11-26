@@ -24,7 +24,7 @@ day's return was counted about five times, which inflates Sharpe by roughly sqrt
 compounded total far more. It also used ABNORMAL (stock minus SPY) returns but compared them
 with SPY's total return, charged no costs, and treated overlapping daily ICs as independent.
 The published "Sharpe 2.08 / 8,689x" is therefore mostly a return-math error, not only
-survivorship. This file is the corrected runner; it has not been re-run yet.
+survivorship. This file is the corrected runner; its re-run is in e10-v0-gbm-rerun-2026-11.*.
 """
 import json, os, sys, time
 import pandas as pd

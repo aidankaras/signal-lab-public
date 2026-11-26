@@ -43,7 +43,9 @@ given every prior lane, LOSE; the interesting output is per-setup expectancy aft
 > `side="short"`, so every short breakout was scored as a win. The ORB numbers below are
 > INVALID, not SUSPECT. The sentence under e7c saying the long-only bug was "fixed before
 > reporting" was true only for e7c, not for e7a. e7c also always shorted, even below VWAP.
-> Both are fixed in `run_e7.py`; e7a and e7c are pending a re-run.
+> Both are fixed in `run_e7.py`. Re-run 2026-11-25 (`e7-setups-rerun-2026-11.md`, a different
+> 60-day window, 2026-09-02 to 2026-11-25): ORB -0.133% per trade (n 2,248), fade -0.111%
+> (n 221), reclaim -0.145% (n 736), random control -0.165%. All LOSE.
 
 - e7a ORB: 2241 trades, expectancy +0.519%, win rate 68.6%. Passes mechanically; recorded
   SUSPECT — single regime, random control uses different stop geometry, additive "total"

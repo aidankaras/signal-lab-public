@@ -14,13 +14,14 @@ the README errata (November 2026) for the experiments where these rules were bro
   booked P&L against the new position, e13 earned the decision day's return, e20 traded inside an
   unfinished 4H bar); see the errata.
 - Labels on multi-day horizons overlap from day to day. IC t-stats for e6, e8 and e10 v0 now use
-  a Newey-West correction (`harness.evaluator.newey_west_t`); the committed numbers predate it.
+  a Newey-West correction (`harness.evaluator.newey_west_t`). The committed e6 and e8 numbers
+  predate it; the e10 v0 re-run (November 2026) uses it.
 
 ## 2. Costs
 Most backtests charge a per-side cost on turnover (default 5 bps; 10 bps for e10 v1; 20 bps round
 trip for e16a, which is conservative for SPY, see the e16a cost table). Not all do: e2 v0, e6, e8
-and e9 are scored on IC or accuracy only, and the e10 v0 run was pre-cost. Gross numbers are
-reported next to net numbers where both exist.
+and e9 are scored on IC or accuracy only, and the first e10 v0 run was pre-cost (its re-run
+charges 5 bps/side). Gross numbers are reported next to net numbers where both exist.
 
 ## 3. Same-window comparison
 Strategy, SPY (total-return proxy), and controls are scored on identical dates.
@@ -38,7 +39,8 @@ Strategy, SPY (total-return proxy), and controls are scored on identical dates.
 ## 5. Overfit accounting
 `registry/trials.jsonl` is append-only and holds the trials that were logged. It is not complete:
 e2 v0, e3 and e18 were not logged, the e20 follow-up trials are in a private registry, some runs
-were logged more than once (e9 five times, e7 twice), and one block of rows is out of
+were logged more than once (e9 five times, the first e7 run twice, the November 2026 e10 v0
+re-run twice because its first attempt was missing one stock), and one block of rows is out of
 chronological order. Deflated Sharpe (Bailey & López de Prado) is computed only for e0, e1 and
 e4, over all logged dev trials for that experiment (duplicates included). PBO is not implemented.
 
@@ -53,10 +55,12 @@ Grids, gates and kill criteria go into `experiments/*/SPEC*.md` before the run. 
 have no SPEC; and e2 was reopened twice after its kill gate (disclosed in its SPEC files).
 
 ## 7. Survivorship
-Universes of today's large caps inflate results. The e10 v0 run on BROAD-40 is INVALID for a
-separate reason (overlapping returns compounded daily, see errata), so it does not measure the
-survivorship effect cleanly. The point-in-time rebuild (e10 v1) gives net Sharpe 0.54 vs SPY 0.97,
-LOSE. Any single-stock result on the BROAD-40 universe is flagged SUSPECT.
+Universes of today's large caps inflate results. The first e10 v0 run on BROAD-40 was INVALID for
+a separate reason (overlapping returns compounded daily, see errata). Its corrected re-run gives
+net Sharpe 1.07 vs SPY 0.97 (IC t 2.03), while the point-in-time rebuild (e10 v1, 10 bps/side)
+gives 0.54 vs 0.97, LOSE. The two differ in universe, period and costs, so the gap is only a rough
+measure of the survivorship effect. Any single-stock result on the BROAD-40 universe is flagged
+SUSPECT.
 
 ## 8. Known limits
 See README "Limitations".

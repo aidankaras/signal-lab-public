@@ -7,7 +7,8 @@
 > underperform random pairs" is not a finding. The P&L was also divided by the spread sd twice,
 > the selection used ADF instead of Engle-Granger critical values, the random pairs used a hedge
 > ratio of 1, and names listed after 2012 were dropped from every year. `run_e12.py` is
-> corrected; the result is pending a re-run.
+> corrected; the November 2026 re-run (`e12-pairs-rerun-2026-11.md`) is LOSE: mean annual -2.9%
+> vs SPY +15.0%, random pairs -3.8%.
 
 Walk-forward years 2016-2026, fit on trailing 3y, top-5 pairs, z=+-2/0.5/4, 10bps/pair round trip.
 

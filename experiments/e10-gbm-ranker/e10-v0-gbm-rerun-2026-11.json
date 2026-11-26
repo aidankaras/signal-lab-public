@@ -1,0 +1,18 @@
+{
+ "ic_mean": 0.01,
+ "ic_t_nw": 2.03,
+ "scored_days": 3465,
+ "rebalances": 694,
+ "port_sharpe_net": 1.07,
+ "port_sharpe_gross": 1.2,
+ "abnormal_sharpe_gross": 0.89,
+ "port_total_net": 24.431,
+ "spy_sharpe": 0.97,
+ "spy_total": 5.499,
+ "verdict": "BEAT",
+ "experiment": "e10_gbm",
+ "window": [
+  "2012-07-03",
+  "2026-11-18"
+ ]
+}

@@ -29,7 +29,7 @@ position and each exit dropped the reverting move. A perfect +3 -> 0 reversion s
 a loss. It also divided by the spread sd twice, used ADF critical values (-3.44) instead
 of Engle-Granger ones, gave the random pairs a hedge ratio of 1, and dropped every name
 that listed after 2012 from all years. Those results are INVALID; this file is the
-corrected runner and has not been re-run yet.
+corrected runner; its re-run is in e12-pairs-rerun-2026-11.*.
 """
 import itertools, json, os, sys, time
 import numpy as np
@@ -48,7 +48,9 @@ N_PAIRS = 5
 def prices():
     from harness import data
     px = data.fetch(BROAD, start="2012-01-01", refresh=False, name="broad")
-    return px.dropna(axis=1)
+    # no global dropna(axis=1): it removed any name with a gap anywhere in 2012+ (META, listed
+    # 2012-05) from every year. main() keeps, per year, the names with full fit+trade history.
+    return px
 
 
 def half_life(resid):
