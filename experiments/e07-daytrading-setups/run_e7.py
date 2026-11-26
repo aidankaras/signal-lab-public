@@ -22,7 +22,7 @@ Errata (2026-11): in the 2026-10-19 run the e7a ORB short leg called simulate() 
 side="short", so the long-side stop check (low <= stop, where stop = range high above entry)
 fired on the first bar and booked every short as a win. e7c always shorted, including
 extremes below VWAP. Both are fixed below; the e7a and e7c numbers in e7-setups.* are from the
-buggy run and are pending a re-run.
+buggy run. The corrected re-run is in e7-setups-rerun-2026-11.* (LOSE).
 """
 import json, os, sys, time
 import numpy as np
@@ -43,7 +43,11 @@ def bars_5m(t):
     os.makedirs(CACHE, exist_ok=True)
     f = os.path.join(CACHE, f"{t}.csv")
     if os.path.exists(f):
-        return pd.read_csv(f, index_col=0, parse_dates=True)
+        # a 60-day window can span a DST change (mixed -04:00/-05:00 offsets); parse_dates then
+        # leaves string labels and every per-day groupby fails, so parse via UTC explicitly
+        df = pd.read_csv(f, index_col=0)
+        df.index = pd.to_datetime(df.index, utc=True).tz_convert("America/New_York")
+        return df
     df = yf.download(t, interval="5m", period="60d", progress=False, auto_adjust=True)
     if isinstance(df.columns, pd.MultiIndex):
         df.columns = df.columns.get_level_values(0)
@@ -160,7 +164,11 @@ def main():
             px[t] = bars_5m(t)
         except Exception as e:
             print(t, "bars ERR", str(e)[:60], flush=True)
-    spy_d = yf.download("SPY", start="2026-07-01", progress=False, auto_adjust=True)
+    # SPY buy-and-hold over the same window as the 5m bars (SPEC: identical windows). The
+    # 2026-10-19 run used a fixed 2026-07-01 start, which only matched while the 60-day
+    # window began in July.
+    win_start = min(d.index[0] for d in px.values()).strftime("%Y-%m-%d")
+    spy_d = yf.download("SPY", start=win_start, progress=False, auto_adjust=True)
     if isinstance(spy_d.columns, pd.MultiIndex):
         spy_d.columns = spy_d.columns.get_level_values(0)
     spy_ret = float(spy_d.Close.iloc[-1] / spy_d.Close.iloc[0] - 1)
@@ -175,7 +183,7 @@ def main():
         d["Gap"] = d.Open / d.Close.shift(1) - 1
         daily[t] = d.dropna()
 
-    res = {"window": "2026-07-01..now (5m data limited to 60d)",
+    res = {"window": f"{win_start}..now (5m data limited to 60d; gap-and-go daily from 2026-07-01)",
            "spy_buyhold": round(spy_ret, 4), "cost_rt_bps": COST_RT * 1e4}
     for name, fn in [("e7a_orb", lambda: orb_trades(df)), ("e7b_vwap_reclaim", lambda: vwap_trades(df, "reclaim")),
                      ("e7c_vwap_fade", lambda: vwap_trades(df, "fade"))]:
