@@ -48,7 +48,9 @@ N_PAIRS = 5
 def prices():
     from harness import data
     px = data.fetch(BROAD, start="2012-01-01", refresh=False, name="broad")
-    return px.dropna(axis=1)
+    # no global dropna(axis=1): it removed any name with a gap anywhere in 2012+ (META, listed
+    # 2012-05) from every year. main() keeps, per year, the names with full fit+trade history.
+    return px
 
 
 def half_life(resid):

@@ -35,4 +35,6 @@ v1 upgrade only if v0 clears the gate.
 Run 2026-10-19; that run is INVALID (see `e12-pairs.md`): the "one-bar delay" above was not
 implemented, and the P&L was booked against the new position. Corrected in November 2026
 (Engle-Granger critical value -3.90 replaces the ADF -3.44 above; random pairs get a fitted
-hedge ratio; per-year universes keep late listings). Re-run pending.
+hedge ratio; per-year universes keep late listings). Re-run 2026-11-25 with the corrected runner:
+LOSE, mean annual -2.9% vs SPY +15.0%, random pairs -3.8% (`e12-pairs-rerun-2026-11.md`).
+The v1 upgrade (Kalman hedge ratio) is not triggered.
